@@ -15,25 +15,25 @@ interface ConfidenceIndicatorProps {
   className?: string
 }
 
-// Vibrant colors for cheerful look
+// Bright neon colors for dark background
 const colorPalette = {
   on_track: {
-    dot: 'rgba(16, 185, 129, 0.9)',
-    glow: 'rgba(16, 185, 129, 0.4)',
-    bg: 'rgba(16, 185, 129, 0.15)',
-    text: 'rgba(52, 211, 153, 1)',
+    dot: '#4ade80',
+    glow: 'rgba(74, 222, 128, 0.5)',
+    bg: 'rgba(74, 222, 128, 0.15)',
+    text: '#4ade80',
   },
   at_risk: {
-    dot: 'rgba(251, 146, 60, 0.9)',
-    glow: 'rgba(251, 146, 60, 0.4)',
-    bg: 'rgba(251, 146, 60, 0.15)',
-    text: 'rgba(251, 146, 60, 1)',
+    dot: '#fbbf24',
+    glow: 'rgba(251, 191, 36, 0.5)',
+    bg: 'rgba(251, 191, 36, 0.15)',
+    text: '#fbbf24',
   },
   off_track: {
-    dot: 'rgba(251, 113, 133, 0.9)',
-    glow: 'rgba(251, 113, 133, 0.4)',
-    bg: 'rgba(251, 113, 133, 0.15)',
-    text: 'rgba(251, 113, 133, 1)',
+    dot: '#f87171',
+    glow: 'rgba(248, 113, 113, 0.5)',
+    bg: 'rgba(248, 113, 113, 0.15)',
+    text: '#f87171',
   },
 }
 

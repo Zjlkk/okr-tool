@@ -26,18 +26,18 @@ export function ProgressBar({
     lg: 'h-2',
   }
 
-  // Vibrant colors for cheerful look
+  // Bright neon colors for dark background
   const getProgressStyle = (): { background: string } => {
     if (clampedProgress >= 70) {
-      // Vivid green
-      return { background: 'rgba(16, 185, 129, 0.55)' }
+      // Neon green
+      return { background: '#4ade80' }
     }
     if (clampedProgress >= 40) {
-      // Vivid blue
-      return { background: 'rgba(56, 189, 248, 0.55)' }
+      // Neon cyan
+      return { background: '#22d3ee' }
     }
-    // Vivid orange
-    return { background: 'rgba(251, 146, 60, 0.55)' }
+    // Neon orange
+    return { background: '#fb923c' }
   }
 
   return (
