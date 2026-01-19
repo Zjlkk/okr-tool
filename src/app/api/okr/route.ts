@@ -1,118 +1,48 @@
 /**
  * @file OKR API
- * @description Create and list personal OKRs
+ * @description Create and list personal OKRs (demo mode returns mock data)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/db'
+import { mockOKRs } from '@/lib/mock-data'
 
 export async function GET(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+  const { searchParams } = new URL(request.url)
+  const period = searchParams.get('period')
 
-    const { searchParams } = new URL(request.url)
-    const period = searchParams.get('period')
-
-    const okrs = await prisma.personalOKR.findMany({
-      where: {
-        userId: session.user.id,
-        ...(period ? { period } : {}),
-        isArchived: false,
-      },
-      orderBy: { createdAt: 'asc' },
-    })
-
-    return NextResponse.json({
-      success: true,
-      data: okrs.map((okr: typeof okrs[number]) => ({
-        id: okr.id,
-        objective: okr.objective,
-        keyResults: okr.keyResults as { id: string; content: string }[],
-        status: okr.status,
-        period: okr.period,
-      })),
-    })
-  } catch (error) {
-    console.error('Failed to fetch OKRs:', error)
-    return NextResponse.json(
-      { success: false, error: 'Failed to fetch OKRs' },
-      { status: 500 }
-    )
-  }
+  // Demo mode: return mock OKRs
+  return NextResponse.json({
+    success: true,
+    data: mockOKRs.map((okr) => ({
+      id: okr.id,
+      objective: okr.objective,
+      keyResults: okr.keyResults,
+      status: okr.status,
+      period: period || '2026-01',
+    })),
+  })
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      )
-    }
+  const { okrs, period } = await request.json()
 
-    const { okrs, period } = await request.json()
-
-    if (!okrs || !Array.isArray(okrs) || okrs.length < 3) {
-      return NextResponse.json(
-        { success: false, error: 'At least 3 objectives are required' },
-        { status: 400 }
-      )
-    }
-
-    if (!period) {
-      return NextResponse.json(
-        { success: false, error: 'Period is required' },
-        { status: 400 }
-      )
-    }
-
-    // Delete existing draft OKRs for this period
-    await prisma.personalOKR.deleteMany({
-      where: {
-        userId: session.user.id,
-        period,
-        status: 'DRAFT',
-      },
-    })
-
-    // Create new OKRs
-    const createdOKRs = await prisma.$transaction(
-      okrs.map((okr: { objective: string; keyResults: { id: string; content: string }[] }) =>
-        prisma.personalOKR.create({
-          data: {
-            userId: session.user.id,
-            period,
-            objective: okr.objective,
-            keyResults: okr.keyResults,
-            status: 'SUBMITTED',
-          },
-        })
-      )
-    )
-
-    // Clear draft
-    await prisma.draft.deleteMany({
-      where: { userId: session.user.id },
-    })
-
-    return NextResponse.json({
-      success: true,
-      data: createdOKRs,
-    })
-  } catch (error) {
-    console.error('Failed to create OKRs:', error)
+  if (!okrs || !Array.isArray(okrs) || okrs.length < 3) {
     return NextResponse.json(
-      { success: false, error: 'Failed to create OKRs' },
-      { status: 500 }
+      { success: false, error: 'At least 3 objectives are required' },
+      { status: 400 }
     )
   }
+
+  // Demo mode: just return success with the submitted OKRs
+  return NextResponse.json({
+    success: true,
+    data: okrs.map((okr: { objective: string; keyResults: { id: string; content: string }[] }, index: number) => ({
+      id: `okr-new-${index + 1}`,
+      userId: 'demo-user-1',
+      period,
+      objective: okr.objective,
+      keyResults: okr.keyResults,
+      status: 'SUBMITTED',
+    })),
+  })
 }

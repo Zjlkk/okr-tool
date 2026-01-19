@@ -1,48 +1,23 @@
 /**
  * @file Authentication Configuration
- * @description NextAuth.js configuration with Google OAuth
+ * @description NextAuth.js configuration - demo mode disabled
  * @see PRD: docs/PRD.md - Function 1: Google Login
  */
 
 import { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { prisma } from './db'
 
+// Demo mode: minimal auth config (not used in demo)
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as NextAuthOptions['adapter'],
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      clientId: process.env.GOOGLE_CLIENT_ID || 'demo-client-id',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'demo-client-secret',
     }),
   ],
-  callbacks: {
-    async session({ session, user }) {
-      if (session.user) {
-        session.user.id = user.id
-        // Fetch additional user info from database
-        const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
-          select: {
-            role: true,
-            departmentId: true,
-          },
-        })
-        if (dbUser) {
-          session.user.role = dbUser.role
-          session.user.departmentId = dbUser.departmentId
-        }
-      }
-      return session
-    },
-  },
   pages: {
     signIn: '/login',
     newUser: '/onboarding',
-  },
-  session: {
-    strategy: 'database',
   },
 }
 

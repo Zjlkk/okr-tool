@@ -1,8 +1,16 @@
 /**
  * @file Database Connection
- * @description Prisma client singleton for database operations (Prisma 7)
+ * @description Prisma client singleton for database operations
+ * Note: In demo mode, prisma is null since we use mock data
  */
 
+// Demo mode: export null since we're using mock data
+// When backend is enabled, uncomment the Prisma setup below
+
+export const prisma = null
+
+/*
+// Full Prisma setup for production use:
 import { PrismaClient } from '@prisma/client'
 import { Pool } from 'pg'
 import { PrismaPg } from '@prisma/adapter-pg'
@@ -27,3 +35,4 @@ function createPrismaClient() {
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+*/
