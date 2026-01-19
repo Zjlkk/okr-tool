@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: okrs.map((okr) => ({
+      data: okrs.map((okr: typeof okrs[number]) => ({
         id: okr.id,
         objective: okr.objective,
         keyResults: okr.keyResults as { id: string; content: string }[],

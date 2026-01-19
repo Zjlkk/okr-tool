@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
       success: true,
       data: {
         departmentGoal: departmentGoal?.objectives || '',
-        okrs: okrs.map((okr) => ({
+        okrs: okrs.map((okr: typeof okrs[number]) => ({
           id: okr.id,
           userId: okr.user.id,
           userName: okr.user.name,

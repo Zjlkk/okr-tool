@@ -22,7 +22,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      data: departments.map((d) => ({
+      data: departments.map((d: typeof departments[number]) => ({
         id: d.id,
         name: d.name,
         leaderId: d.leaderId,

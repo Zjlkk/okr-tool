@@ -278,8 +278,16 @@ export default function CreateOKRPage() {
 
   const questions = phase === 'objective' ? objectiveQuestions : keyResultQuestions
   const currentQuestion = questions[currentQuestionIndex]
-  const answers = phase === 'objective' ? objectiveAnswers : keyResultAnswers
-  const currentAnswer = answers[currentQuestion?.id as keyof typeof answers] || ''
+
+  // Get current answer based on phase
+  const getCurrentAnswer = (): string => {
+    if (!currentQuestion) return ''
+    if (phase === 'objective') {
+      return objectiveAnswers[currentQuestion.id as keyof typeof objectiveAnswers] || ''
+    }
+    return keyResultAnswers[currentQuestion.id as keyof typeof keyResultAnswers] || ''
+  }
+  const currentAnswer = getCurrentAnswer()
 
   return (
     <div className="max-w-3xl mx-auto">
