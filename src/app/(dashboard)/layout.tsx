@@ -1,16 +1,17 @@
 /**
  * @file Dashboard Layout
- * @description Layout for dashboard pages with navigation (demo mode - no auth)
+ * @description Layout for dashboard pages with navigation
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Target, Users, Plus, LogOut, Globe, ChevronDown, ChevronRight } from 'lucide-react'
-import { mockUser, mockDepartments } from '@/lib/mock-data'
+import { mockDepartments } from '@/lib/mock-data'
 import { useLanguageStore } from '@/stores/useLanguageStore'
+import { useUserStore } from '@/stores/useUserStore'
 import { PeriodSelector } from '@/components/ui'
 
 export default function DashboardLayout({
@@ -21,10 +22,25 @@ export default function DashboardLayout({
   const pathname = usePathname()
   const router = useRouter()
   const { language, setLanguage, t } = useLanguageStore()
+  const { user, isLoggedIn, isOnboarded, logout } = useUserStore()
   const [isTeamOKRExpanded, setIsTeamOKRExpanded] = useState(pathname.startsWith('/team-okr'))
+  const [mounted, setMounted] = useState(false)
 
-  // Use mock user for demo
-  const user = mockUser
+  // Handle hydration
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Redirect if not logged in or not onboarded
+  useEffect(() => {
+    if (mounted) {
+      if (!isLoggedIn) {
+        router.push('/login')
+      } else if (!isOnboarded) {
+        router.push('/onboarding')
+      }
+    }
+  }, [mounted, isLoggedIn, isOnboarded, router])
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'zh' : 'en')
@@ -41,6 +57,20 @@ export default function DashboardLayout({
       // Navigate to first department when expanding
       router.push('/team-okr/ceo')
     }
+  }
+
+  const handleLogout = () => {
+    logout()
+    router.push('/login')
+  }
+
+  // Show nothing while checking auth
+  if (!mounted || !isLoggedIn || !isOnboarded) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg-primary)] flex items-center justify-center">
+        <div className="loading-bar" />
+      </div>
+    )
   }
 
   return (
@@ -118,7 +148,7 @@ export default function DashboardLayout({
                   <div className="absolute left-[18px] top-0 bottom-2 w-px bg-[var(--color-border)]" />
 
                   <ul className="space-y-0.5">
-                    {mockDepartments.map((dept, index) => (
+                    {mockDepartments.map((dept) => (
                       <li key={dept.id} className="relative">
                         {/* Horizontal connector line */}
                         <div className="absolute left-[18px] top-1/2 w-3 h-px bg-[var(--color-border)]" />
@@ -169,19 +199,21 @@ export default function DashboardLayout({
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center">
               <span className="text-[var(--color-text-secondary)] font-medium">
-                {user.name?.[0] || 'U'}
+                {user?.name?.[0] || 'U'}
               </span>
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-[var(--text-sm)] font-medium text-[var(--color-text-primary)] truncate">
-                {user.name}
+                {user?.name || 'User'}
               </div>
               <div className="text-[var(--text-xs)] text-[var(--color-text-secondary)]">
-                {user.role === 'LEADER' ? t('common.teamLeader') : t('common.teamMember')}
+                {user?.role === 'LEADER' ? t('common.teamLeader') : t('common.teamMember')}
+                {user?.departmentName && ` · ${user.departmentName}`}
               </div>
             </div>
           </div>
           <button
+            onClick={handleLogout}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-[var(--text-xs)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
           >
             <LogOut className="w-4 h-4" />

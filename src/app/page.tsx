@@ -1,11 +1,10 @@
 /**
  * @file Home Page
- * @description Redirects to dashboard (demo mode - no auth required)
+ * @description Redirects to login page
  */
 
 import { redirect } from 'next/navigation'
 
 export default function HomePage() {
-  // Demo mode: redirect directly to dashboard
-  redirect('/my-okr')
+  redirect('/login')
 }
