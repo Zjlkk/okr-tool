@@ -1,10 +1,11 @@
 /**
  * @file Trend Chart Component
- * @description SVG-based line chart for OKR progress trends with refined aesthetics
+ * @description SVG-based line chart for OKR progress trends with hover tooltips
  */
 
 'use client'
 
+import { useState } from 'react'
 import { useLanguageStore } from '@/stores/useLanguageStore'
 import { mockCurrentWeek } from '@/lib/mock-data'
 
@@ -28,6 +29,7 @@ interface TrendChartProps {
 
 export function TrendChart({ lines, height = 200, className = '' }: TrendChartProps) {
   const { t } = useLanguageStore()
+  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; week: number; progress: number } | null>(null)
 
   const padding = { top: 20, right: 20, bottom: 30, left: 40 }
   const width = 600
@@ -69,11 +71,12 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
   }
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full relative ${className}`}>
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="w-full"
         style={{ maxHeight: height }}
+        onMouseLeave={() => setHoveredPoint(null)}
       >
         <defs>
           {/* Gradient for area fill */}
@@ -153,20 +156,65 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
               strokeLinejoin="round"
             />
 
-            {/* Data points */}
+            {/* Data points with hover */}
             {line.data.map((point) => (
-              <circle
-                key={`${line.id}-${point.weekNumber}`}
-                cx={xScale(point.weekNumber)}
-                cy={yScale(point.progress)}
-                r="4"
-                fill="#22d3ee"
-                stroke="var(--color-bg-card)"
-                strokeWidth="2"
-              />
+              <g key={`${line.id}-${point.weekNumber}`}>
+                {/* Larger invisible hit area */}
+                <circle
+                  cx={xScale(point.weekNumber)}
+                  cy={yScale(point.progress)}
+                  r="12"
+                  fill="transparent"
+                  className="cursor-pointer"
+                  onMouseEnter={() => setHoveredPoint({
+                    x: xScale(point.weekNumber),
+                    y: yScale(point.progress),
+                    week: point.weekNumber,
+                    progress: point.progress,
+                  })}
+                />
+                {/* Visible point */}
+                <circle
+                  cx={xScale(point.weekNumber)}
+                  cy={yScale(point.progress)}
+                  r={hoveredPoint?.week === point.weekNumber ? 6 : 4}
+                  fill="#22d3ee"
+                  stroke="var(--color-bg-card)"
+                  strokeWidth="2"
+                  className="transition-all duration-150 pointer-events-none"
+                />
+              </g>
             ))}
           </g>
         ))}
+
+        {/* Tooltip */}
+        {hoveredPoint && (
+          <g>
+            {/* Tooltip background */}
+            <rect
+              x={hoveredPoint.x - 28}
+              y={hoveredPoint.y - 32}
+              width="56"
+              height="22"
+              rx="4"
+              fill="rgba(0, 0, 0, 0.85)"
+              stroke="rgba(255, 255, 255, 0.1)"
+              strokeWidth="1"
+            />
+            {/* Tooltip text */}
+            <text
+              x={hoveredPoint.x}
+              y={hoveredPoint.y - 18}
+              textAnchor="middle"
+              fill="white"
+              fontSize="11"
+              fontWeight="500"
+            >
+              W{hoveredPoint.week}: {hoveredPoint.progress}%
+            </text>
+          </g>
+        )}
       </svg>
 
       {/* Legend */}
@@ -189,7 +237,7 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
   )
 }
 
-// Simple single-line mini chart for OKR cards
+// Simple single-line mini chart for OKR cards with hover tooltip
 interface MiniTrendChartProps {
   data: DataPoint[]
   width?: number
@@ -198,6 +246,8 @@ interface MiniTrendChartProps {
 }
 
 export function MiniTrendChart({ data, width = 100, height = 32, className = '' }: MiniTrendChartProps) {
+  const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; week: number; progress: number } | null>(null)
+
   if (data.length === 0) return null
 
   const sortedData = [...data].sort((a, b) => a.weekNumber - b.weekNumber)
@@ -220,44 +270,79 @@ export function MiniTrendChart({ data, width = 100, height = 32, className = '' 
   const areaPath = `${path} L ${xScale(sortedData[sortedData.length - 1].weekNumber)} ${padding + chartHeight} L ${xScale(sortedData[0].weekNumber)} ${padding + chartHeight} Z`
 
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox={`0 0 ${width} ${height}`}
-      className={className}
-    >
-      <defs>
-        <linearGradient id="miniAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="rgba(34, 211, 238, 0.2)" />
-          <stop offset="100%" stopColor="rgba(34, 211, 238, 0)" />
-        </linearGradient>
-      </defs>
+    <div className="relative">
+      <svg
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+        className={className}
+        onMouseLeave={() => setHoveredPoint(null)}
+      >
+        <defs>
+          <linearGradient id="miniAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="rgba(34, 211, 238, 0.2)" />
+            <stop offset="100%" stopColor="rgba(34, 211, 238, 0)" />
+          </linearGradient>
+        </defs>
 
-      {/* Area fill */}
-      <path
-        d={areaPath}
-        fill="url(#miniAreaGradient)"
-      />
-
-      {/* Line */}
-      <path
-        d={path}
-        fill="none"
-        stroke="#22d3ee"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* Latest point */}
-      {sortedData.length > 0 && (
-        <circle
-          cx={xScale(sortedData[sortedData.length - 1].weekNumber)}
-          cy={yScale(sortedData[sortedData.length - 1].progress)}
-          r="2.5"
-          fill="#22d3ee"
+        {/* Area fill */}
+        <path
+          d={areaPath}
+          fill="url(#miniAreaGradient)"
         />
+
+        {/* Line */}
+        <path
+          d={path}
+          fill="none"
+          stroke="#22d3ee"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+
+        {/* Data points with hover */}
+        {sortedData.map((point) => (
+          <g key={point.weekNumber}>
+            {/* Larger invisible hit area */}
+            <circle
+              cx={xScale(point.weekNumber)}
+              cy={yScale(point.progress)}
+              r="8"
+              fill="transparent"
+              className="cursor-pointer"
+              onMouseEnter={() => setHoveredPoint({
+                x: xScale(point.weekNumber),
+                y: yScale(point.progress),
+                week: point.weekNumber,
+                progress: point.progress,
+              })}
+            />
+            {/* Visible point */}
+            <circle
+              cx={xScale(point.weekNumber)}
+              cy={yScale(point.progress)}
+              r={hoveredPoint?.week === point.weekNumber ? 3.5 : 2}
+              fill="#22d3ee"
+              className="transition-all duration-150 pointer-events-none"
+            />
+          </g>
+        ))}
+      </svg>
+
+      {/* Tooltip - positioned above the chart */}
+      {hoveredPoint && (
+        <div
+          className="absolute px-2 py-1 text-[10px] font-medium text-white bg-black/90 rounded border border-white/10 whitespace-nowrap pointer-events-none z-10"
+          style={{
+            left: hoveredPoint.x,
+            top: -4,
+            transform: 'translate(-50%, -100%)',
+          }}
+        >
+          W{hoveredPoint.week}: {hoveredPoint.progress}%
+        </div>
       )}
-    </svg>
+    </div>
   )
 }
