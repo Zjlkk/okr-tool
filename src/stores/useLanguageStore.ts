@@ -72,7 +72,7 @@ const translations: Record<Language, Translations> = {
     // Questions
     'question.mostImportant': 'What is the most important thing you want to achieve this bi-monthly period? What is your goal?',
     'question.whyImportant': 'Why is this important? How does it help the department goal?',
-    'question.keyActions': 'What key actions do you need to take to achieve this objective?',
+    'question.keyPaths': 'List 3-4 specific paths to achieve the above objective',
     'question.successCriteria': 'How will you know you have achieved it? What metrics define success?',
 
     // Status
@@ -143,7 +143,7 @@ const translations: Record<Language, Translations> = {
     // Questions
     'question.mostImportant': '这两个月你最想达成的事情是什么？你的目标是什么？',
     'question.whyImportant': '为什么这很重要？它如何帮助实现部门目标？',
-    'question.keyActions': '你需要采取哪些关键行动来实现这个目标？',
+    'question.keyPaths': '列出 3-4 个实现上述目标的具体路径',
     'question.successCriteria': '你如何知道自己已经实现了目标？哪些指标定义成功？',
 
     // Status

@@ -88,8 +88,8 @@ export default function CreateOKRPage() {
   const keyResultQuestions = [
     {
       id: 'keyActions',
-      questionKey: 'question.keyActions',
-      placeholder: 'e.g., Design and implement the onboarding flow, run A/B tests, analyze user feedback...',
+      questionKey: 'question.keyPaths',
+      placeholder: 'e.g., 1. Redesign onboarding flow  2. Implement user tracking  3. Launch A/B testing  4. Create feedback system...',
     },
     {
       id: 'successCriteria',
