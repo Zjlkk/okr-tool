@@ -1,22 +1,11 @@
 /**
  * @file Home Page
- * @description Redirects to appropriate page based on auth status
+ * @description Redirects to dashboard (demo mode - no auth required)
  */
 
 import { redirect } from 'next/navigation'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
 
-export default async function HomePage() {
-  const session = await getServerSession(authOptions)
-
-  if (!session) {
-    redirect('/login')
-  }
-
-  if (!session.user?.role || !session.user?.departmentId) {
-    redirect('/onboarding')
-  }
-
+export default function HomePage() {
+  // Demo mode: redirect directly to dashboard
   redirect('/my-okr')
 }

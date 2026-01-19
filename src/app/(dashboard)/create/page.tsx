@@ -1,19 +1,19 @@
 /**
  * @file OKR Creation Page
- * @description AI-guided OKR creation with Q&A flow
+ * @description AI-guided OKR creation with Q&A flow (demo mode - uses mock AI)
  * @see PRD: Function 5 - AI Guided Q&A, Function 6 - Manual Mode
  */
 
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button, Card, Textarea } from '@/components/ui'
 import { useOKRStore } from '@/stores/useOKRStore'
 import { useToastStore } from '@/stores/useToastStore'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
+import { mockDepartmentGoal, mockAIObjective, mockAIKeyResults } from '@/lib/mock-data'
 import {
   Sparkles,
   PenLine,
@@ -53,7 +53,6 @@ const keyResultQuestions = [
 ]
 
 export default function CreateOKRPage() {
-  const { data: session } = useSession()
   const router = useRouter()
   const { success: showSuccess, error: showError } = useToastStore()
   const { setLoading } = useLoadingStore()
@@ -91,117 +90,55 @@ export default function CreateOKRPage() {
 
   const currentPeriod = getCurrentPeriod()
 
-  // Fetch department goal
+  // Use mock department goal
   useEffect(() => {
-    async function fetchDepartmentGoal() {
-      if (!session?.user?.departmentId) return
-      try {
-        const res = await fetch(`/api/department/${session.user.departmentId}/goal?period=${currentPeriod}`)
-        const data = await res.json()
-        if (data.success && data.data) {
-          setDepartmentGoal(data.data.objectives)
-        }
-      } catch (err) {
-        console.error('Failed to fetch department goal:', err)
-      }
-    }
-    fetchDepartmentGoal()
-  }, [session, currentPeriod])
+    setDepartmentGoal(mockDepartmentGoal)
+  }, [])
 
-  // Generate Objective
+  // Mock Generate Objective (simulates AI response)
   const handleGenerateObjective = async () => {
     setIsGenerating(true)
     setLoading(true)
-    try {
-      const res = await fetch('/api/ai/generate-objective', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          departmentGoal,
-          answers: objectiveAnswers,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setGeneratedObjective(data.data)
-      } else if (data.feedback) {
-        showError(data.feedback)
-      } else {
-        showError(data.error || 'Failed to generate objective')
-      }
-    } catch {
-      showError('An error occurred. Please try again.')
-    } finally {
-      setIsGenerating(false)
-      setLoading(false)
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setGeneratedObjective(mockAIObjective)
+    setIsGenerating(false)
+    setLoading(false)
   }
 
-  // Generate Key Results
+  // Mock Generate Key Results (simulates AI response)
   const handleGenerateKeyResults = async () => {
     setIsGenerating(true)
     setLoading(true)
-    try {
-      const res = await fetch('/api/ai/generate-key-results', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          departmentGoal,
-          objective: generatedObjective,
-          answers: keyResultAnswers,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        setGeneratedKeyResults(data.data)
-      } else if (data.feedback) {
-        showError(data.feedback)
-      } else {
-        showError(data.error || 'Failed to generate key results')
-      }
-    } catch {
-      showError('An error occurred. Please try again.')
-    } finally {
-      setIsGenerating(false)
-      setLoading(false)
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    setGeneratedKeyResults(mockAIKeyResults)
+    setIsGenerating(false)
+    setLoading(false)
   }
 
-  // Optimize with feedback
+  // Mock Optimize with feedback
   const handleOptimize = async () => {
     if (!feedback.trim()) return
 
     setIsGenerating(true)
     setLoading(true)
-    try {
-      const endpoint = phase === 'objective' ? '/api/ai/optimize-objective' : '/api/ai/optimize-key-results'
-      const body = phase === 'objective'
-        ? { currentObjective: generatedObjective, feedback, departmentGoal }
-        : { objective: generatedObjective, currentKeyResults: generatedKeyResults, feedback }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 800))
 
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      })
-      const data = await res.json()
-      if (data.success) {
-        if (phase === 'objective') {
-          setGeneratedObjective(data.data)
-        } else {
-          setGeneratedKeyResults(data.data)
-        }
-        setFeedback('')
-        setShowFeedbackInput(false)
-      } else {
-        showError(data.error || 'Failed to optimize')
-      }
-    } catch {
-      showError('An error occurred. Please try again.')
-    } finally {
-      setIsGenerating(false)
-      setLoading(false)
+    if (phase === 'objective') {
+      // Modify objective based on feedback (mock)
+      setGeneratedObjective(`${mockAIObjective} (optimized based on: ${feedback.slice(0, 20)}...)`)
+    } else {
+      // Modify key results based on feedback (mock)
+      setGeneratedKeyResults(mockAIKeyResults.map((kr, i) =>
+        i === 0 ? `${kr} (refined)` : kr
+      ))
     }
+    setFeedback('')
+    setShowFeedbackInput(false)
+    setIsGenerating(false)
+    setLoading(false)
   }
 
   // Confirm and move to next phase
@@ -244,7 +181,7 @@ export default function CreateOKRPage() {
     showSuccess(`Objective ${confirmedOKRs.length + 1} added!`)
   }
 
-  // Submit all OKRs
+  // Mock Submit all OKRs
   const handleSubmitAll = async () => {
     if (confirmedOKRs.length < 3) {
       showError('You need at least 3 Objectives to submit')
@@ -252,28 +189,12 @@ export default function CreateOKRPage() {
     }
 
     setLoading(true)
-    try {
-      const res = await fetch('/api/okr', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          okrs: confirmedOKRs,
-          period: currentPeriod,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        showSuccess('OKRs submitted successfully!')
-        reset()
-        router.push('/my-okr')
-      } else {
-        showError(data.error || 'Failed to submit OKRs')
-      }
-    } catch {
-      showError('An error occurred. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500))
+    showSuccess('OKRs submitted successfully!')
+    reset()
+    router.push('/my-okr')
+    setLoading(false)
   }
 
   const questions = phase === 'objective' ? objectiveQuestions : keyResultQuestions

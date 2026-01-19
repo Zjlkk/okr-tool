@@ -1,17 +1,17 @@
 /**
  * @file My OKR Page
- * @description View and manage personal OKRs
+ * @description View and manage personal OKRs (demo mode - uses mock data)
  * @see PRD: Function 9 - My OKR
  */
 
 'use client'
 
-import { useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button, Card } from '@/components/ui'
 import { Plus, Edit2, Trash2, ChevronDown, ChevronUp } from 'lucide-react'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
+import { mockOKRs } from '@/lib/mock-data'
 
 interface KeyResult {
   id: string
@@ -27,7 +27,6 @@ interface OKR {
 }
 
 export default function MyOKRPage() {
-  const { data: session } = useSession()
   const [okrs, setOkrs] = useState<OKR[]>([])
   const [expandedOKR, setExpandedOKR] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -35,24 +34,13 @@ export default function MyOKRPage() {
   const currentPeriod = getCurrentPeriod()
 
   useEffect(() => {
-    async function fetchOKRs() {
-      try {
-        const res = await fetch(`/api/okr?period=${currentPeriod}`)
-        const data = await res.json()
-        if (data.success) {
-          setOkrs(data.data)
-        }
-      } catch (error) {
-        console.error('Failed to fetch OKRs:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    if (session) {
-      fetchOKRs()
-    }
-  }, [session, currentPeriod])
+    // Simulate loading with mock data
+    const timer = setTimeout(() => {
+      setOkrs(mockOKRs)
+      setIsLoading(false)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const toggleExpand = (id: string) => {
     setExpandedOKR(expandedOKR === id ? null : id)

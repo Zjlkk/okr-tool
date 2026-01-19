@@ -1,17 +1,17 @@
 /**
  * @file Team OKR Page
- * @description View team members' OKRs by department
+ * @description View team members' OKRs by department (demo mode - uses mock data)
  * @see PRD: Function 10 - Team OKR
  */
 
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
 import { Card, Tabs, Button } from '@/components/ui'
 import { useToastStore } from '@/stores/useToastStore'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
 import { Bell, ChevronDown, ChevronUp, User } from 'lucide-react'
+import { mockDepartments, mockTeamOKRs, mockDepartmentGoal, mockUser } from '@/lib/mock-data'
 
 interface KeyResult {
   id: string
@@ -22,7 +22,7 @@ interface UserOKR {
   id: string
   userId: string
   userName: string
-  userImage?: string
+  userImage?: string | null
   objective: string
   keyResults: KeyResult[]
   status: 'DRAFT' | 'SUBMITTED'
@@ -31,13 +31,12 @@ interface UserOKR {
 interface Department {
   id: string
   name: string
-  hasGoal: boolean
+  hasGoal?: boolean
   leaderId?: string
   leaderName?: string
 }
 
 export default function TeamOKRPage() {
-  const { data: session } = useSession()
   const { success, error } = useToastStore()
 
   const [departments, setDepartments] = useState<Department[]>([])
@@ -49,82 +48,48 @@ export default function TeamOKRPage() {
   const [isReminding, setIsReminding] = useState(false)
 
   const currentPeriod = getCurrentPeriod()
+  const user = mockUser
 
-  // Fetch departments
+  // Load mock departments
   useEffect(() => {
-    async function fetchDepartments() {
-      try {
-        const res = await fetch('/api/department')
-        const data = await res.json()
-        if (data.success) {
-          setDepartments(data.data)
-          if (data.data.length > 0) {
-            setActiveDepartment(data.data[0].id)
-          }
-        }
-      } catch {
-        // Use default departments
-        const defaultDepts = [
-          { id: 'product', name: 'Product', hasGoal: false },
-          { id: 'design', name: 'Design', hasGoal: false },
-          { id: 'engineering', name: 'Engineering', hasGoal: false },
-          { id: 'gtm', name: 'GTM', hasGoal: false },
-        ]
-        setDepartments(defaultDepts)
-        setActiveDepartment('product')
-      }
-    }
-    fetchDepartments()
+    setDepartments(mockDepartments)
+    setActiveDepartment(mockDepartments[0]?.id || 'product')
   }, [])
 
-  // Fetch team OKRs when department changes
+  // Load mock team OKRs when department changes
   useEffect(() => {
-    async function fetchTeamOKRs() {
-      if (!activeDepartment) return
+    if (!activeDepartment) return
 
-      setIsLoading(true)
-      try {
-        const res = await fetch(`/api/okr/team?departmentId=${activeDepartment}&period=${currentPeriod}`)
-        const data = await res.json()
-        if (data.success) {
-          setTeamOKRs(data.data.okrs || [])
-          setDepartmentGoal(data.data.departmentGoal || '')
-        }
-      } catch (err) {
-        console.error('Failed to fetch team OKRs:', err)
-      } finally {
-        setIsLoading(false)
+    setIsLoading(true)
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      // Show different data based on department
+      if (activeDepartment === 'product') {
+        setTeamOKRs(mockTeamOKRs)
+        setDepartmentGoal(mockDepartmentGoal)
+      } else {
+        // Other departments have no OKRs in demo
+        setTeamOKRs([])
+        setDepartmentGoal('')
       }
-    }
-    fetchTeamOKRs()
-  }, [activeDepartment, currentPeriod])
+      setIsLoading(false)
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [activeDepartment])
 
   const handleRemindLeader = async () => {
     const dept = departments.find((d) => d.id === activeDepartment)
-    if (!dept?.leaderId) return
+    if (!dept?.leaderId) {
+      success('Reminder sent to leader!')
+      return
+    }
 
     setIsReminding(true)
-    try {
-      const res = await fetch('/api/reminder', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          toUserId: dept.leaderId,
-          departmentId: activeDepartment,
-          period: currentPeriod,
-        }),
-      })
-      const data = await res.json()
-      if (data.success) {
-        success('Reminder sent to leader!')
-      } else {
-        error(data.error || 'Failed to send reminder')
-      }
-    } catch {
-      error('Failed to send reminder')
-    } finally {
+    // Simulate API call
+    setTimeout(() => {
+      success('Reminder sent to leader!')
       setIsReminding(false)
-    }
+    }, 500)
   }
 
   const toggleExpand = (id: string) => {
@@ -168,7 +133,7 @@ export default function TeamOKRPage() {
             </div>
           </div>
         </Card>
-      ) : currentDept && !currentDept.hasGoal ? (
+      ) : currentDept && !departmentGoal && activeDepartment !== 'product' ? (
         <Card className="mb-6 bg-[var(--color-warning-light)] border-[var(--color-warning)]">
           <div className="flex items-center justify-between">
             <div>
@@ -179,7 +144,7 @@ export default function TeamOKRPage() {
                 Leader needs to set the department goal for this period.
               </p>
             </div>
-            {session?.user?.role === 'MEMBER' && (
+            {user.role === 'MEMBER' && (
               <Button
                 variant="secondary"
                 size="sm"

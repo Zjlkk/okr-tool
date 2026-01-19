@@ -1,11 +1,10 @@
 /**
  * @file Providers Component
- * @description Wraps app with necessary providers (Auth, Theme, etc.)
+ * @description Wraps app with necessary providers (demo mode - no auth required)
  */
 
 'use client'
 
-import { SessionProvider } from 'next-auth/react'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 import { useToastStore } from '@/stores/useToastStore'
 import { LoadingBar, Toast } from '@/components/ui'
@@ -19,7 +18,7 @@ export function Providers({ children }: ProvidersProps) {
   const { toasts, removeToast } = useToastStore()
 
   return (
-    <SessionProvider>
+    <>
       <LoadingBar isLoading={isLoading} />
       {children}
       {/* Noise overlay for retro-tech feel */}
@@ -36,6 +35,6 @@ export function Providers({ children }: ProvidersProps) {
           />
         ))}
       </div>
-    </SessionProvider>
+    </>
   )
 }

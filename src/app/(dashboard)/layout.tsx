@@ -1,16 +1,14 @@
 /**
  * @file Dashboard Layout
- * @description Layout for authenticated dashboard pages with navigation
+ * @description Layout for dashboard pages with navigation (demo mode - no auth)
  */
 
 'use client'
 
-import { useSession } from 'next-auth/react'
-import { useRouter, usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { Target, Users, Plus, Settings, LogOut } from 'lucide-react'
-import { signOut } from 'next-auth/react'
+import { mockUser } from '@/lib/mock-data'
 
 interface NavItem {
   href: string
@@ -29,29 +27,10 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { data: session, status } = useSession()
-  const router = useRouter()
   const pathname = usePathname()
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login')
-    } else if (session && !session.user?.role) {
-      router.push('/onboarding')
-    }
-  }, [session, status, router])
-
-  if (status === 'loading') {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg-primary)]">
-        <div className="loading-bar" />
-      </div>
-    )
-  }
-
-  if (!session) {
-    return null
-  }
+  // Use mock user for demo
+  const user = mockUser
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
@@ -96,25 +75,17 @@ export default function DashboardLayout({
         {/* User Section */}
         <div className="p-4 border-t border-[var(--color-border)]">
           <div className="flex items-center gap-3 mb-4">
-            {session.user?.image ? (
-              <img
-                src={session.user.image}
-                alt={session.user.name || 'User'}
-                className="w-10 h-10 rounded-full"
-              />
-            ) : (
-              <div className="w-10 h-10 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center">
-                <span className="text-[var(--color-text-secondary)] font-medium">
-                  {session.user?.name?.[0] || 'U'}
-                </span>
-              </div>
-            )}
+            <div className="w-10 h-10 rounded-full bg-[var(--color-bg-secondary)] flex items-center justify-center">
+              <span className="text-[var(--color-text-secondary)] font-medium">
+                {user.name?.[0] || 'U'}
+              </span>
+            </div>
             <div className="flex-1 min-w-0">
               <div className="text-[var(--text-sm)] font-medium text-[var(--color-text-primary)] truncate">
-                {session.user?.name}
+                {user.name}
               </div>
               <div className="text-[var(--text-xs)] text-[var(--color-text-secondary)]">
-                {session.user?.role === 'LEADER' ? 'Team Leader' : 'Team Member'}
+                {user.role === 'LEADER' ? 'Team Leader' : 'Team Member'}
               </div>
             </div>
           </div>
@@ -126,7 +97,6 @@ export default function DashboardLayout({
               Settings
             </button>
             <button
-              onClick={() => signOut({ callbackUrl: '/login' })}
               className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-[var(--text-xs)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
             >
               <LogOut className="w-4 h-4" />
