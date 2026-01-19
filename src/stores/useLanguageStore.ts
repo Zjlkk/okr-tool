@@ -66,6 +66,8 @@ const translations: Record<Language, Translations> = {
     'create.needMore': 'Need {count} more objective(s) to submit',
     'create.readySubmit': 'Ready to submit!',
     'create.submitAll': 'Submit All OKRs',
+    'create.settingUpObjective': 'Setting up your {n} objective',
+    'create.minimumRequired': 'You need at least 3 objectives to submit your OKRs',
 
     // Questions
     'question.mostImportant': 'What is the most important thing you want to achieve this bi-monthly period? What is your goal?',
@@ -135,6 +137,8 @@ const translations: Record<Language, Translations> = {
     'create.needMore': '还需要 {count} 个目标才能提交',
     'create.readySubmit': '准备提交！',
     'create.submitAll': '提交所有 OKR',
+    'create.settingUpObjective': '正在设置第 {n} 个目标',
+    'create.minimumRequired': '您至少需要 3 个目标才能提交 OKR',
 
     // Questions
     'question.mostImportant': '这两个月你最想达成的事情是什么？你的目标是什么？',

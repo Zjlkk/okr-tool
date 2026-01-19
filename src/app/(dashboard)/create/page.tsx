@@ -26,11 +26,18 @@ import {
   Trash2,
 } from 'lucide-react'
 
+// Helper function to get ordinal suffix
+function getOrdinal(n: number): string {
+  const s = ['th', 'st', 'nd', 'rd']
+  const v = n % 100
+  return n + (s[(v - 20) % 10] || s[v] || s[0])
+}
+
 export default function CreateOKRPage() {
   const router = useRouter()
   const { success: showSuccess, error: showError } = useToastStore()
   const { setLoading } = useLoadingStore()
-  const { t } = useLanguageStore()
+  const { t, language } = useLanguageStore()
 
   const {
     phase,
@@ -246,6 +253,25 @@ export default function CreateOKRPage() {
           {isManualMode ? t('create.aiMode') : t('create.manualMode')}
         </Button>
       </div>
+
+      {/* Current Objective Indicator */}
+      {confirmedOKRs.length < 3 && (
+        <div className="mb-6 p-4 bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/30 rounded-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center" style={{ boxShadow: 'var(--glow-primary-sm)' }}>
+              <span className="text-white font-bold">{confirmedOKRs.length + 1}</span>
+            </div>
+            <div>
+              <p className="text-[var(--text-sm)] font-medium text-[var(--color-text-primary)]">
+                {t('create.settingUpObjective').replace('{n}', language === 'en' ? getOrdinal(confirmedOKRs.length + 1) : String(confirmedOKRs.length + 1))}
+              </p>
+              <p className="text-[var(--text-xs)] text-[var(--color-text-secondary)]">
+                {t('create.minimumRequired')}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Manual Mode */}
       {isManualMode ? (
