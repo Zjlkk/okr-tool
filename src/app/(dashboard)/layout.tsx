@@ -8,9 +8,10 @@
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Target, Users, Plus, Settings, LogOut, Globe, ChevronDown, ChevronRight } from 'lucide-react'
+import { Target, Users, Plus, LogOut, Globe, ChevronDown, ChevronRight } from 'lucide-react'
 import { mockUser, mockDepartments } from '@/lib/mock-data'
 import { useLanguageStore } from '@/stores/useLanguageStore'
+import { PeriodSelector } from '@/components/ui'
 
 export default function DashboardLayout({
   children,
@@ -44,8 +45,9 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-primary)]">
-      {/* Top Bar with Language Switcher */}
-      <div className="fixed top-0 right-0 left-64 h-14 bg-[var(--color-bg-card)] border-b border-[var(--color-border)] z-10 flex items-center justify-end px-6">
+      {/* Top Bar with Period Selector and Language Switcher */}
+      <div className="fixed top-0 right-0 left-64 h-14 bg-[var(--color-bg-card)] border-b border-[var(--color-border)] z-10 flex items-center justify-between px-6">
+        <PeriodSelector />
         <button
           onClick={toggleLanguage}
           className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] text-[var(--text-sm)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
@@ -179,20 +181,12 @@ export default function DashboardLayout({
               </div>
             </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-[var(--text-xs)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
-            >
-              <Settings className="w-4 h-4" />
-              {t('nav.settings')}
-            </button>
-            <button
-              className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-[var(--text-xs)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              {t('nav.signOut')}
-            </button>
-          </div>
+          <button
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-[var(--text-xs)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            {t('nav.signOut')}
+          </button>
         </div>
       </aside>
 

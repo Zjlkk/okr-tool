@@ -123,7 +123,6 @@ export default function TeamOKRDepartmentPage({ params }: PageProps) {
               >
                 <OKRTree
                   name={member.userName}
-                  avatar={member.userImage}
                   isLeader={false}
                   okrs={[{
                     id: member.id,

@@ -14,7 +14,7 @@ import { useToastStore } from '@/stores/useToastStore'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 import { useLanguageStore } from '@/stores/useLanguageStore'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
-import { mockDepartmentGoal, mockAIObjective, mockAIKeyResults } from '@/lib/mock-data'
+import { mockAIObjective, mockAIKeyResults } from '@/lib/mock-data'
 import {
   Sparkles,
   PenLine,
@@ -53,7 +53,6 @@ export default function CreateOKRPage() {
     resetCurrentAnswers,
   } = useOKRStore()
 
-  const [departmentGoal, setDepartmentGoal] = useState('')
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [isGenerating, setIsGenerating] = useState(false)
   const [feedback, setFeedback] = useState('')
@@ -91,11 +90,6 @@ export default function CreateOKRPage() {
       placeholder: 'e.g., Activation rate increases from 40% to 60%, user drop-off reduces by 30%...',
     },
   ]
-
-  // Use mock department goal
-  useEffect(() => {
-    setDepartmentGoal(mockDepartmentGoal)
-  }, [])
 
   // Mock Generate Objective (simulates AI response)
   const handleGenerateObjective = async () => {
@@ -252,16 +246,6 @@ export default function CreateOKRPage() {
           {isManualMode ? t('create.aiMode') : t('create.manualMode')}
         </Button>
       </div>
-
-      {/* Department Goal */}
-      {departmentGoal && (
-        <Card className="mb-6 bg-[var(--color-primary)]/5 border-[var(--color-primary)]/20">
-          <h3 className="text-[var(--text-sm)] font-semibold text-[var(--color-text-primary)] mb-2">
-            Department Goal
-          </h3>
-          <p className="text-[var(--color-text-secondary)]">{departmentGoal}</p>
-        </Card>
-      )}
 
       {/* Manual Mode */}
       {isManualMode ? (
