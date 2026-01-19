@@ -13,6 +13,7 @@ export const mockUser = {
 }
 
 export const mockDepartments = [
+  { id: 'ceo', name: 'CEO', leaderId: 'leader-0', leaderName: 'Alex Thompson' },
   { id: 'product', name: 'Product', leaderId: 'leader-1', leaderName: 'Sarah Chen' },
   { id: 'design', name: 'Design', leaderId: 'leader-2', leaderName: 'Mike Johnson' },
   { id: 'engineering', name: 'Engineering', leaderId: 'leader-3', leaderName: 'David Kim' },
@@ -22,23 +23,79 @@ export const mockDepartments = [
 
 export const mockDepartmentGoal = 'Increase user activation rate by 30% and reduce churn by 15% through improved onboarding experience and proactive engagement strategies.'
 
-// Leader OKRs for each department
+// Leader OKRs for each department (3 Objectives each, 3-4 KRs per Objective)
 export const mockLeaderOKRs: Record<string, {
   id: string
   objective: string
   keyResults: { id: string; content: string }[]
   status: 'DRAFT' | 'SUBMITTED'
 }[]> = {
+  ceo: [
+    {
+      id: 'leader-okr-ceo-1',
+      objective: 'Drive company-wide growth and market leadership',
+      keyResults: [
+        { id: 'lkr-c-1-1', content: 'Increase ARR from $5M to $10M' },
+        { id: 'lkr-c-1-2', content: 'Expand to 3 new international markets' },
+        { id: 'lkr-c-1-3', content: 'Achieve Series B funding of $30M+' },
+        { id: 'lkr-c-1-4', content: 'Grow team from 50 to 100 employees' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-ceo-2',
+      objective: 'Build a world-class leadership team and company culture',
+      keyResults: [
+        { id: 'lkr-c-2-1', content: 'Hire 3 senior executives (CTO, CFO, CMO)' },
+        { id: 'lkr-c-2-2', content: 'Achieve employee NPS of 70+' },
+        { id: 'lkr-c-2-3', content: 'Maintain voluntary turnover below 10%' },
+        { id: 'lkr-c-2-4', content: 'Complete leadership development program for all managers' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-ceo-3',
+      objective: 'Establish strategic partnerships and ecosystem',
+      keyResults: [
+        { id: 'lkr-c-3-1', content: 'Close 5 strategic partnership deals' },
+        { id: 'lkr-c-3-2', content: 'Launch partner program with 20+ certified partners' },
+        { id: 'lkr-c-3-3', content: 'Generate 25% of revenue through partner channel' },
+      ],
+      status: 'SUBMITTED',
+    },
+  ],
   product: [
     {
       id: 'leader-okr-product-1',
       objective: 'Drive product-led growth through improved user activation',
       keyResults: [
         { id: 'lkr-p-1-1', content: 'Increase Day-7 activation rate from 40% to 60%' },
-        { id: 'lkr-p-1-2', content: 'Launch 3 new features based on user feedback' },
+        { id: 'lkr-p-1-2', content: 'Reduce onboarding drop-off rate by 50%' },
         { id: 'lkr-p-1-3', content: 'Achieve product NPS score of 50+' },
+        { id: 'lkr-p-1-4', content: 'Increase free-to-paid conversion rate from 5% to 10%' },
       ],
       status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-product-2',
+      objective: 'Launch enterprise-grade features to expand market',
+      keyResults: [
+        { id: 'lkr-p-2-1', content: 'Ship SSO and SAML authentication' },
+        { id: 'lkr-p-2-2', content: 'Launch role-based access control (RBAC)' },
+        { id: 'lkr-p-2-3', content: 'Achieve SOC 2 Type II compliance' },
+        { id: 'lkr-p-2-4', content: 'Onboard 10 enterprise customers to new features' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-product-3',
+      objective: 'Build data-driven product decision framework',
+      keyResults: [
+        { id: 'lkr-p-3-1', content: 'Implement tracking for 100% of key user actions' },
+        { id: 'lkr-p-3-2', content: 'Create weekly product metrics dashboard' },
+        { id: 'lkr-p-3-3', content: 'Run 10 A/B tests with statistically significant results' },
+      ],
+      status: 'DRAFT',
     },
   ],
   design: [
@@ -49,8 +106,30 @@ export const mockLeaderOKRs: Record<string, {
         { id: 'lkr-d-1-1', content: 'Complete design system documentation with 100+ components' },
         { id: 'lkr-d-1-2', content: 'Reduce design-to-development handoff time by 40%' },
         { id: 'lkr-d-1-3', content: 'Achieve 90% design consistency score across all products' },
+        { id: 'lkr-d-1-4', content: 'Launch Figma component library with 100% adoption' },
       ],
       status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-design-2',
+      objective: 'Improve user experience through research-driven design',
+      keyResults: [
+        { id: 'lkr-d-2-1', content: 'Conduct 30+ user interviews per quarter' },
+        { id: 'lkr-d-2-2', content: 'Increase task completion rate from 70% to 90%' },
+        { id: 'lkr-d-2-3', content: 'Reduce user error rate by 60%' },
+        { id: 'lkr-d-2-4', content: 'Achieve SUS (System Usability Scale) score of 80+' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-design-3',
+      objective: 'Scale design team and processes',
+      keyResults: [
+        { id: 'lkr-d-3-1', content: 'Hire 3 senior designers across UX, UI, and motion' },
+        { id: 'lkr-d-3-2', content: 'Implement design critique process with weekly reviews' },
+        { id: 'lkr-d-3-3', content: 'Reduce design cycle time from 2 weeks to 1 week' },
+      ],
+      status: 'DRAFT',
     },
   ],
   engineering: [
@@ -60,7 +139,29 @@ export const mockLeaderOKRs: Record<string, {
       keyResults: [
         { id: 'lkr-e-1-1', content: 'Achieve 99.9% system uptime' },
         { id: 'lkr-e-1-2', content: 'Reduce average API response time to under 100ms' },
-        { id: 'lkr-e-1-3', content: 'Implement CI/CD pipeline with 80% test coverage' },
+        { id: 'lkr-e-1-3', content: 'Scale infrastructure to handle 10x current load' },
+        { id: 'lkr-e-1-4', content: 'Implement auto-scaling with zero manual intervention' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-eng-2',
+      objective: 'Improve engineering productivity and code quality',
+      keyResults: [
+        { id: 'lkr-e-2-1', content: 'Implement CI/CD pipeline with 80% test coverage' },
+        { id: 'lkr-e-2-2', content: 'Reduce deployment time from 30 min to 5 min' },
+        { id: 'lkr-e-2-3', content: 'Achieve PR merge time under 24 hours' },
+        { id: 'lkr-e-2-4', content: 'Reduce production bugs by 50%' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-eng-3',
+      objective: 'Strengthen security and compliance posture',
+      keyResults: [
+        { id: 'lkr-e-3-1', content: 'Complete security audit with zero critical findings' },
+        { id: 'lkr-e-3-2', content: 'Implement end-to-end encryption for all data' },
+        { id: 'lkr-e-3-3', content: 'Achieve GDPR and CCPA compliance' },
       ],
       status: 'SUBMITTED',
     },
@@ -71,20 +172,64 @@ export const mockLeaderOKRs: Record<string, {
       objective: 'Accelerate market expansion and revenue growth',
       keyResults: [
         { id: 'lkr-g-1-1', content: 'Increase MRR by 50% through new customer acquisition' },
-        { id: 'lkr-g-1-2', content: 'Launch in 3 new geographic markets' },
+        { id: 'lkr-g-1-2', content: 'Launch in 3 new geographic markets (EU, APAC, LATAM)' },
         { id: 'lkr-g-1-3', content: 'Achieve 120% net revenue retention' },
+        { id: 'lkr-g-1-4', content: 'Reduce customer acquisition cost (CAC) by 20%' },
       ],
       status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-gtm-2',
+      objective: 'Build high-performing sales organization',
+      keyResults: [
+        { id: 'lkr-g-2-1', content: 'Hire and ramp 10 new account executives' },
+        { id: 'lkr-g-2-2', content: 'Achieve 80% quota attainment across sales team' },
+        { id: 'lkr-g-2-3', content: 'Reduce sales cycle from 60 days to 45 days' },
+        { id: 'lkr-g-2-4', content: 'Implement sales playbook with 90% adoption' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-gtm-3',
+      objective: 'Establish thought leadership and brand awareness',
+      keyResults: [
+        { id: 'lkr-g-3-1', content: 'Increase organic website traffic by 100%' },
+        { id: 'lkr-g-3-2', content: 'Publish 20 thought leadership articles' },
+        { id: 'lkr-g-3-3', content: 'Speak at 10 industry conferences' },
+      ],
+      status: 'DRAFT',
     },
   ],
   operations: [
     {
       id: 'leader-okr-ops-1',
-      objective: 'Optimize operational efficiency and team productivity',
+      objective: 'Optimize operational efficiency and cost structure',
       keyResults: [
         { id: 'lkr-o-1-1', content: 'Reduce operational costs by 20%' },
         { id: 'lkr-o-1-2', content: 'Implement automated workflows for 80% of repetitive tasks' },
-        { id: 'lkr-o-1-3', content: 'Achieve employee satisfaction score of 4.5/5' },
+        { id: 'lkr-o-1-3', content: 'Reduce vendor management overhead by 30%' },
+        { id: 'lkr-o-1-4', content: 'Achieve 95% on-time delivery for internal SLAs' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-ops-2',
+      objective: 'Build exceptional employee experience',
+      keyResults: [
+        { id: 'lkr-o-2-1', content: 'Achieve employee satisfaction score of 4.5/5' },
+        { id: 'lkr-o-2-2', content: 'Reduce time-to-hire from 45 days to 30 days' },
+        { id: 'lkr-o-2-3', content: 'Implement comprehensive onboarding with 90% satisfaction' },
+        { id: 'lkr-o-2-4', content: 'Launch learning & development program with 80% participation' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'leader-okr-ops-3',
+      objective: 'Strengthen financial planning and reporting',
+      keyResults: [
+        { id: 'lkr-o-3-1', content: 'Implement monthly close process within 5 business days' },
+        { id: 'lkr-o-3-2', content: 'Achieve budget variance under 5%' },
+        { id: 'lkr-o-3-3', content: 'Launch real-time financial dashboard for leadership' },
       ],
       status: 'SUBMITTED',
     },
@@ -134,6 +279,34 @@ export const mockTeamOKRsByDepartment: Record<string, {
   keyResults: { id: string; content: string }[]
   status: 'DRAFT' | 'SUBMITTED'
 }[]> = {
+  ceo: [
+    {
+      id: 'team-okr-c-1',
+      userId: 'user-c-1',
+      userName: 'Rachel Kim',
+      userImage: null,
+      objective: 'Support CEO in strategic planning and execution',
+      keyResults: [
+        { id: 'tkr-c-1-1', content: 'Prepare board meeting materials with 100% on-time delivery' },
+        { id: 'tkr-c-1-2', content: 'Coordinate 5 executive offsites' },
+        { id: 'tkr-c-1-3', content: 'Manage CEO calendar with 95% efficiency score' },
+      ],
+      status: 'SUBMITTED',
+    },
+    {
+      id: 'team-okr-c-2',
+      userId: 'user-c-2',
+      userName: 'Daniel Lee',
+      userImage: null,
+      objective: 'Drive cross-functional strategic initiatives',
+      keyResults: [
+        { id: 'tkr-c-2-1', content: 'Lead 3 company-wide transformation projects' },
+        { id: 'tkr-c-2-2', content: 'Achieve 90% stakeholder satisfaction on initiatives' },
+        { id: 'tkr-c-2-3', content: 'Reduce project delivery time by 25%' },
+      ],
+      status: 'SUBMITTED',
+    },
+  ],
   product: [
     {
       id: 'team-okr-p-1',
