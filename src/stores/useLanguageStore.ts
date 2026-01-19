@@ -35,6 +35,8 @@ const translations: Record<Language, Translations> = {
     'teamOkr.goalNotSet': 'Department Goal Not Set',
     'teamOkr.goalNotSetDesc': 'Leader needs to set the department goal for this period.',
     'teamOkr.remindLeader': 'Remind Leader',
+    'teamOkr.leaderOkr': "Leader's OKR",
+    'teamOkr.teamMembersOkr': "Team Members' OKR",
     'teamOkr.noOkrs': 'No OKRs yet',
     'teamOkr.noOkrsDesc': "Team members haven't created OKRs for this period yet.",
 
@@ -102,6 +104,8 @@ const translations: Record<Language, Translations> = {
     'teamOkr.goalNotSet': '部门目标未设置',
     'teamOkr.goalNotSetDesc': '负责人需要为本期设置部门目标。',
     'teamOkr.remindLeader': '提醒负责人',
+    'teamOkr.leaderOkr': '负责人的 OKR',
+    'teamOkr.teamMembersOkr': '团队成员的 OKR',
     'teamOkr.noOkrs': '暂无 OKR',
     'teamOkr.noOkrsDesc': '团队成员尚未为本期创建 OKR。',
 
