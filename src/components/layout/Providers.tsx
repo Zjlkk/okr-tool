@@ -21,8 +21,6 @@ export function Providers({ children }: ProvidersProps) {
     <>
       <LoadingBar isLoading={isLoading} />
       {children}
-      {/* Noise overlay for retro-tech feel */}
-      <div className="noise-overlay" />
       {/* Toast notifications */}
       <div className="fixed top-4 right-4 z-[2000] flex flex-col gap-2">
         {toasts.map((toast) => (
