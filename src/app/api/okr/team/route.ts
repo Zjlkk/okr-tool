@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { mockTeamOKRs, mockDepartmentGoal } from '@/lib/mock-data'
+import { mockTeamOKRsByDepartment, mockDepartmentGoal } from '@/lib/mock-data'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -18,31 +18,31 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  // Demo mode: return mock data for product department
-  if (departmentId === 'product') {
-    return NextResponse.json({
-      success: true,
-      data: {
-        departmentGoal: mockDepartmentGoal,
-        okrs: mockTeamOKRs.map((okr) => ({
-          id: okr.id,
-          userId: okr.userId,
-          userName: okr.userName,
-          userImage: okr.userImage,
-          objective: okr.objective,
-          keyResults: okr.keyResults,
-          status: okr.status,
-        })),
-      },
-    })
-  }
+  // Demo mode: return mock data for the specified department
+  const teamMembers = mockTeamOKRsByDepartment[departmentId] || []
 
-  // Other departments have no data in demo
+  // Flatten the OKRs for backwards compatibility
+  const okrs = teamMembers.flatMap((member) =>
+    member.okrs.map((okr) => ({
+      id: okr.id,
+      userId: member.userId,
+      userName: member.userName,
+      userImage: member.userImage,
+      objective: okr.objective,
+      keyResults: okr.keyResults.map((kr) => ({
+        id: kr.id,
+        content: kr.content,
+        progress: kr.progress,
+      })),
+      status: okr.status,
+    }))
+  )
+
   return NextResponse.json({
     success: true,
     data: {
-      departmentGoal: '',
-      okrs: [],
+      departmentGoal: departmentId === 'product' ? mockDepartmentGoal : '',
+      okrs,
     },
   })
 }
