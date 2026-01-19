@@ -8,11 +8,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Button, Card } from '@/components/ui'
-import { Plus, Edit2, Trash2 } from 'lucide-react'
+import { Button, Card, Textarea } from '@/components/ui'
+import { Plus, Edit2, Trash2, X, Check } from 'lucide-react'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
 import { mockOKRs } from '@/lib/mock-data'
 import { useLanguageStore } from '@/stores/useLanguageStore'
+import { useToastStore } from '@/stores/useToastStore'
 
 interface KeyResult {
   id: string
@@ -27,10 +28,18 @@ interface OKR {
   status: 'DRAFT' | 'SUBMITTED'
 }
 
+interface EditFormData {
+  objective: string
+  keyResults: string[]
+}
+
 export default function MyOKRPage() {
   const [okrs, setOkrs] = useState<OKR[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [editingIndex, setEditingIndex] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState<EditFormData>({ objective: '', keyResults: [] })
   const { t } = useLanguageStore()
+  const { success: showSuccess } = useToastStore()
 
   const currentPeriod = getCurrentPeriod()
 
@@ -44,6 +53,50 @@ export default function MyOKRPage() {
   }, [])
 
   const canDelete = okrs.length > 3
+
+  const handleStartEdit = (index: number) => {
+    const okr = okrs[index]
+    setEditForm({
+      objective: okr.objective,
+      keyResults: okr.keyResults.map(kr => kr.content),
+    })
+    setEditingIndex(index)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingIndex(null)
+    setEditForm({ objective: '', keyResults: [] })
+  }
+
+  const handleSaveEdit = () => {
+    if (editingIndex === null) return
+
+    const updatedOkrs = [...okrs]
+    updatedOkrs[editingIndex] = {
+      ...updatedOkrs[editingIndex],
+      objective: editForm.objective,
+      keyResults: editForm.keyResults.map((content, i) => ({
+        id: updatedOkrs[editingIndex].keyResults[i]?.id || `kr-${Date.now()}-${i}`,
+        content,
+      })),
+    }
+    setOkrs(updatedOkrs)
+    setEditingIndex(null)
+    setEditForm({ objective: '', keyResults: [] })
+    showSuccess(t('myOkr.editSuccess'))
+  }
+
+  const handleEditKeyResult = (krIndex: number, value: string) => {
+    const newKeyResults = [...editForm.keyResults]
+    newKeyResults[krIndex] = value
+    setEditForm({ ...editForm, keyResults: newKeyResults })
+  }
+
+  const handleDeleteOKR = (index: number) => {
+    const updatedOkrs = okrs.filter((_, i) => i !== index)
+    setOkrs(updatedOkrs)
+    showSuccess(t('myOkr.deleteSuccess'))
+  }
 
   return (
     <div>
@@ -88,64 +141,122 @@ export default function MyOKRPage() {
         <div className="space-y-4">
           {okrs.map((okr, index) => (
             <Card key={okr.id} className="overflow-hidden">
-              {/* Objective Header */}
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-[var(--text-xs)] font-medium text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded">
-                      O{index + 1}
-                    </span>
-                    <span
-                      className={`text-[var(--text-xs)] px-2 py-1 rounded ${
-                        okr.status === 'SUBMITTED'
-                          ? 'text-[var(--color-success)] bg-[var(--color-success-light)]'
-                          : 'text-[var(--color-warning)] bg-[var(--color-warning-light)]'
-                      }`}
-                    >
-                      {okr.status === 'SUBMITTED' ? t('status.submitted') : t('status.draft')}
-                    </span>
+              {editingIndex === index ? (
+                /* Edit Mode */
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[var(--text-xs)] font-medium text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded">
+                        O{index + 1}
+                      </span>
+                      <span className="text-[var(--text-sm)] font-medium text-[var(--color-text-primary)]">
+                        {t('myOkr.editing')}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleCancelEdit}
+                        className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)] transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={handleSaveEdit}
+                        className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-success)] hover:bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)] transition-colors"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <h3 className="text-[var(--text-base)] font-semibold text-[var(--color-text-primary)]">
-                    {okr.objective}
-                  </h3>
-                </div>
-                <div className="flex items-center gap-2 ml-4">
-                  <button
-                    onClick={() => {
-                      // TODO: Edit functionality
-                    }}
-                    className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)] transition-colors"
-                  >
-                    <Edit2 className="w-4 h-4" />
-                  </button>
-                  {canDelete && (
-                    <button
-                      onClick={() => {
-                        // TODO: Delete functionality
-                      }}
-                      className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:bg-[var(--color-error-light)] rounded-[var(--radius-md)] transition-colors"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
 
-              {/* Key Results - Always Expanded */}
-              <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
-                <ul className="space-y-3">
-                  {okr.keyResults.map((kr, krIndex) => (
-                    <li key={kr.id} className="flex items-start gap-3">
-                      <span className="text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] px-2 py-1 rounded mt-0.5">
-                        KR{krIndex + 1}
-                      </span>
-                      <span className="text-[var(--text-sm)] text-[var(--color-text-primary)] flex-1">
-                        {kr.content}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <div className="mb-4">
+                    <label className="block mb-2 text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)]">
+                      {t('create.objective')}
+                    </label>
+                    <Textarea
+                      value={editForm.objective}
+                      onChange={(e) => setEditForm({ ...editForm, objective: e.target.value })}
+                      className="min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="pt-4 border-t border-[var(--color-border)]">
+                    <label className="block mb-2 text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)]">
+                      {t('create.keyResults')}
+                    </label>
+                    <ul className="space-y-3">
+                      {editForm.keyResults.map((kr, krIndex) => (
+                        <li key={krIndex} className="flex items-start gap-3">
+                          <span className="text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] px-2 py-1 rounded mt-2">
+                            KR{krIndex + 1}
+                          </span>
+                          <Textarea
+                            value={kr}
+                            onChange={(e) => handleEditKeyResult(krIndex, e.target.value)}
+                            className="flex-1 min-h-[60px]"
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                /* View Mode */
+                <>
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-[var(--text-xs)] font-medium text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded">
+                          O{index + 1}
+                        </span>
+                        <span
+                          className={`text-[var(--text-xs)] px-2 py-1 rounded ${
+                            okr.status === 'SUBMITTED'
+                              ? 'text-[var(--color-success)] bg-[var(--color-success-light)]'
+                              : 'text-[var(--color-warning)] bg-[var(--color-warning-light)]'
+                          }`}
+                        >
+                          {okr.status === 'SUBMITTED' ? t('status.submitted') : t('status.draft')}
+                        </span>
+                      </div>
+                      <h3 className="text-[var(--text-base)] font-semibold text-[var(--color-text-primary)]">
+                        {okr.objective}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                      <button
+                        onClick={() => handleStartEdit(index)}
+                        className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] hover:bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)] transition-colors"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      {canDelete && (
+                        <button
+                          onClick={() => handleDeleteOKR(index)}
+                          className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-error)] hover:bg-[var(--color-error-light)] rounded-[var(--radius-md)] transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-[var(--color-border)]">
+                    <ul className="space-y-3">
+                      {okr.keyResults.map((kr, krIndex) => (
+                        <li key={kr.id} className="flex items-start gap-3">
+                          <span className="text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)] bg-[var(--color-bg-secondary)] px-2 py-1 rounded mt-0.5">
+                            KR{krIndex + 1}
+                          </span>
+                          <span className="text-[var(--text-sm)] text-[var(--color-text-primary)] flex-1">
+                            {kr.content}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
             </Card>
           ))}
 

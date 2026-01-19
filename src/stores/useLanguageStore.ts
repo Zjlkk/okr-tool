@@ -28,6 +28,9 @@ const translations: Record<Language, Translations> = {
     'myOkr.startCreating': 'Start by creating your first Objective for this period.',
     'myOkr.createFirst': 'Create Your First OKR',
     'myOkr.minimumWarning': 'You need at least 3 Objectives to submit. Currently: {current}/3',
+    'myOkr.editing': 'Editing',
+    'myOkr.editSuccess': 'OKR updated successfully',
+    'myOkr.deleteSuccess': 'OKR deleted successfully',
 
     // Team OKR Page
     'teamOkr.title': 'Team OKR',
@@ -99,6 +102,9 @@ const translations: Record<Language, Translations> = {
     'myOkr.startCreating': '开始为本期创建您的第一个目标。',
     'myOkr.createFirst': '创建首个 OKR',
     'myOkr.minimumWarning': '至少需要 3 个目标才能提交。当前：{current}/3',
+    'myOkr.editing': '编辑中',
+    'myOkr.editSuccess': 'OKR 更新成功',
+    'myOkr.deleteSuccess': 'OKR 删除成功',
 
     // Team OKR Page
     'teamOkr.title': '团队 OKR',

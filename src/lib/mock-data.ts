@@ -279,34 +279,7 @@ export const mockTeamOKRsByDepartment: Record<string, {
   keyResults: { id: string; content: string }[]
   status: 'DRAFT' | 'SUBMITTED'
 }[]> = {
-  ceo: [
-    {
-      id: 'team-okr-c-1',
-      userId: 'user-c-1',
-      userName: 'Rachel Kim',
-      userImage: null,
-      objective: 'Support CEO in strategic planning and execution',
-      keyResults: [
-        { id: 'tkr-c-1-1', content: 'Prepare board meeting materials with 100% on-time delivery' },
-        { id: 'tkr-c-1-2', content: 'Coordinate 5 executive offsites' },
-        { id: 'tkr-c-1-3', content: 'Manage CEO calendar with 95% efficiency score' },
-      ],
-      status: 'SUBMITTED',
-    },
-    {
-      id: 'team-okr-c-2',
-      userId: 'user-c-2',
-      userName: 'Daniel Lee',
-      userImage: null,
-      objective: 'Drive cross-functional strategic initiatives',
-      keyResults: [
-        { id: 'tkr-c-2-1', content: 'Lead 3 company-wide transformation projects' },
-        { id: 'tkr-c-2-2', content: 'Achieve 90% stakeholder satisfaction on initiatives' },
-        { id: 'tkr-c-2-3', content: 'Reduce project delivery time by 25%' },
-      ],
-      status: 'SUBMITTED',
-    },
-  ],
+  ceo: [],
   product: [
     {
       id: 'team-okr-p-1',

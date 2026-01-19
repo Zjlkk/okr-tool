@@ -412,20 +412,30 @@ export default function CreateOKRPage() {
                 </h3>
 
                 {phase === 'objective' ? (
-                  <div className="p-4 bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)]">
-                    <p className="text-[var(--color-text-primary)]">{generatedObjective}</p>
-                  </div>
+                  <Textarea
+                    value={generatedObjective}
+                    onChange={(e) => setGeneratedObjective(e.target.value)}
+                    className="min-h-[100px]"
+                  />
                 ) : (
                   <ul className="space-y-2">
                     {generatedKeyResults.map((kr, index) => (
                       <li
                         key={index}
-                        className="p-4 bg-[var(--color-bg-secondary)] rounded-[var(--radius-md)] flex items-start gap-3"
+                        className="flex items-start gap-3"
                       >
-                        <span className="text-[var(--text-xs)] font-medium text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded">
+                        <span className="text-[var(--text-xs)] font-medium text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-2 py-1 rounded mt-2">
                           KR{index + 1}
                         </span>
-                        <p className="text-[var(--color-text-primary)] flex-1">{kr}</p>
+                        <Textarea
+                          value={kr}
+                          onChange={(e) => {
+                            const newKRs = [...generatedKeyResults]
+                            newKRs[index] = e.target.value
+                            setGeneratedKeyResults(newKRs)
+                          }}
+                          className="flex-1 min-h-[80px]"
+                        />
                       </li>
                     ))}
                   </ul>
