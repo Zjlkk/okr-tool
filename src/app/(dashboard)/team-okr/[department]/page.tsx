@@ -35,10 +35,13 @@ export default function TeamOKRDepartmentPage({ params }: PageProps) {
   const departmentProgress = getDepartmentProgressSummary()
 
   useEffect(() => {
+    // Reset loading state when department changes
+    setIsLoading(true)
+
     // Simulate loading
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 300)
+    }, 400)
     return () => clearTimeout(timer)
   }, [department])
 
@@ -82,8 +85,26 @@ export default function TeamOKRDepartmentPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <div className="loading-bar" />
+      <div className="animate-pulse">
+        {/* Header skeleton */}
+        <div className="mb-8">
+          <div className="h-8 w-48 bg-[var(--color-bg-secondary)] rounded mb-2" />
+          <div className="h-4 w-32 bg-[var(--color-bg-secondary)] rounded" />
+        </div>
+        {/* Trend chart skeleton */}
+        <div className="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+          <div className="h-5 w-40 bg-[var(--color-bg-secondary)] rounded mb-4" />
+          <div className="h-[180px] bg-[var(--color-bg-secondary)] rounded" />
+        </div>
+        {/* Content skeleton */}
+        <div className="space-y-4">
+          <div className="h-5 w-32 bg-[var(--color-bg-secondary)] rounded mb-4" />
+          <div className="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6">
+            <div className="h-4 w-full bg-[var(--color-bg-secondary)] rounded mb-3" />
+            <div className="h-4 w-3/4 bg-[var(--color-bg-secondary)] rounded mb-3" />
+            <div className="h-4 w-1/2 bg-[var(--color-bg-secondary)] rounded" />
+          </div>
+        </div>
       </div>
     )
   }
