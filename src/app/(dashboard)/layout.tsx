@@ -55,11 +55,8 @@ export default function DashboardLayout({
       <aside className="fixed left-0 top-0 h-full w-64 bg-[var(--color-bg-card)] border-r border-[var(--color-border)] flex flex-col">
         {/* Logo */}
         <div className="p-6 border-b border-[var(--color-border)]">
-          <Link href="/my-okr" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-[var(--radius-md)] gradient-primary flex items-center justify-center shadow-lg" style={{ boxShadow: 'var(--glow-primary-sm)' }}>
-              <span className="text-white font-bold">O</span>
-            </div>
-            <span className="text-[var(--text-lg)] font-semibold text-[var(--color-text-primary)]">
+          <Link href="/my-okr">
+            <span className="text-[var(--text-xl)] font-semibold text-[var(--color-text-primary)]">
               OKR Tool
             </span>
           </Link>
@@ -124,7 +121,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="ml-64 min-h-screen pt-14 p-8">
+      <main className="ml-64 min-h-screen pt-24 px-8 pb-8">
         {children}
       </main>
     </div>
