@@ -15,25 +15,25 @@ interface ConfidenceIndicatorProps {
   className?: string
 }
 
-// Bright colors with high transparency
+// Vibrant colors for cheerful look
 const colorPalette = {
   on_track: {
-    dot: 'rgba(34, 197, 94, 0.7)',
-    glow: 'rgba(34, 197, 94, 0.2)',
-    bg: 'rgba(34, 197, 94, 0.1)',
-    text: 'rgba(34, 197, 94, 0.8)',
+    dot: 'rgba(16, 185, 129, 0.9)',
+    glow: 'rgba(16, 185, 129, 0.4)',
+    bg: 'rgba(16, 185, 129, 0.15)',
+    text: 'rgba(52, 211, 153, 1)',
   },
   at_risk: {
-    dot: 'rgba(245, 158, 11, 0.7)',
-    glow: 'rgba(245, 158, 11, 0.2)',
-    bg: 'rgba(245, 158, 11, 0.1)',
-    text: 'rgba(245, 158, 11, 0.8)',
+    dot: 'rgba(251, 146, 60, 0.9)',
+    glow: 'rgba(251, 146, 60, 0.4)',
+    bg: 'rgba(251, 146, 60, 0.15)',
+    text: 'rgba(251, 146, 60, 1)',
   },
   off_track: {
-    dot: 'rgba(239, 68, 68, 0.7)',
-    glow: 'rgba(239, 68, 68, 0.2)',
-    bg: 'rgba(239, 68, 68, 0.1)',
-    text: 'rgba(239, 68, 68, 0.8)',
+    dot: 'rgba(251, 113, 133, 0.9)',
+    glow: 'rgba(251, 113, 133, 0.4)',
+    bg: 'rgba(251, 113, 133, 0.15)',
+    text: 'rgba(251, 113, 133, 1)',
   },
 }
 

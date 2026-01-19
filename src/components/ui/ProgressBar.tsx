@@ -26,18 +26,18 @@ export function ProgressBar({
     lg: 'h-2',
   }
 
-  // Bright colors with high transparency for refined look
+  // Vibrant colors for cheerful look
   const getProgressStyle = (): { background: string } => {
     if (clampedProgress >= 70) {
-      // Bright green - success
-      return { background: 'rgba(34, 197, 94, 0.35)' }
+      // Vivid green
+      return { background: 'rgba(16, 185, 129, 0.55)' }
     }
     if (clampedProgress >= 40) {
-      // Bright blue/primary
-      return { background: 'rgba(59, 130, 246, 0.35)' }
+      // Vivid blue
+      return { background: 'rgba(56, 189, 248, 0.55)' }
     }
-    // Bright amber - warning
-    return { background: 'rgba(245, 158, 11, 0.35)' }
+    // Vivid orange
+    return { background: 'rgba(251, 146, 60, 0.55)' }
   }
 
   return (
