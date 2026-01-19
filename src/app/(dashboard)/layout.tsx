@@ -5,23 +5,12 @@
 
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Target, Users, Plus, Settings, LogOut, Globe } from 'lucide-react'
-import { mockUser } from '@/lib/mock-data'
+import { Target, Users, Plus, Settings, LogOut, Globe, ChevronDown, ChevronRight } from 'lucide-react'
+import { mockUser, mockDepartments } from '@/lib/mock-data'
 import { useLanguageStore } from '@/stores/useLanguageStore'
-
-interface NavItem {
-  href: string
-  labelKey: string
-  icon: React.ReactNode
-}
-
-const navItems: NavItem[] = [
-  { href: '/my-okr', labelKey: 'nav.myOkr', icon: <Target className="w-5 h-5" /> },
-  { href: '/team-okr', labelKey: 'nav.teamOkr', icon: <Users className="w-5 h-5" /> },
-  { href: '/create', labelKey: 'nav.createOkr', icon: <Plus className="w-5 h-5" /> },
-]
 
 export default function DashboardLayout({
   children,
@@ -29,13 +18,28 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const router = useRouter()
   const { language, setLanguage, t } = useLanguageStore()
+  const [isTeamOKRExpanded, setIsTeamOKRExpanded] = useState(pathname.startsWith('/team-okr'))
 
   // Use mock user for demo
   const user = mockUser
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'zh' : 'en')
+  }
+
+  // Get current department from URL
+  const currentDept = pathname.startsWith('/team-okr/')
+    ? pathname.split('/team-okr/')[1]
+    : null
+
+  const handleTeamOKRClick = () => {
+    setIsTeamOKRExpanded(!isTeamOKRExpanded)
+    if (!isTeamOKRExpanded) {
+      // Navigate to first department when expanding
+      router.push('/team-okr/ceo')
+    }
   }
 
   return (
@@ -63,26 +67,98 @@ export default function DashboardLayout({
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            {navItems.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className={`
-                    flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)]
-                    transition-all duration-[var(--duration-fast)]
-                    ${pathname === item.href
-                      ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]'
-                      : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
-                    }
-                  `}
-                >
-                  {item.icon}
-                  <span className="font-medium">{t(item.labelKey)}</span>
-                </Link>
-              </li>
-            ))}
+        <nav className="flex-1 p-4 overflow-y-auto">
+          <ul className="space-y-1">
+            {/* My OKR */}
+            <li>
+              <Link
+                href="/my-okr"
+                className={`
+                  flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)]
+                  transition-all duration-[var(--duration-fast)]
+                  ${pathname === '/my-okr'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
+                  }
+                `}
+              >
+                <Target className="w-5 h-5" />
+                <span className="font-medium">{t('nav.myOkr')}</span>
+              </Link>
+            </li>
+
+            {/* Team OKR - Expandable */}
+            <li>
+              <button
+                onClick={handleTeamOKRClick}
+                className={`
+                  w-full flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)]
+                  transition-all duration-[var(--duration-fast)]
+                  ${pathname.startsWith('/team-okr')
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
+                  }
+                `}
+              >
+                <Users className="w-5 h-5" />
+                <span className="font-medium flex-1 text-left">{t('nav.teamOkr')}</span>
+                {isTeamOKRExpanded ? (
+                  <ChevronDown className="w-4 h-4" />
+                ) : (
+                  <ChevronRight className="w-4 h-4" />
+                )}
+              </button>
+
+              {/* Department Tree */}
+              {isTeamOKRExpanded && (
+                <div className="ml-4 mt-1 relative">
+                  {/* Vertical line */}
+                  <div className="absolute left-[18px] top-0 bottom-2 w-px bg-[var(--color-border)]" />
+
+                  <ul className="space-y-0.5">
+                    {mockDepartments.map((dept, index) => (
+                      <li key={dept.id} className="relative">
+                        {/* Horizontal connector line */}
+                        <div className="absolute left-[18px] top-1/2 w-3 h-px bg-[var(--color-border)]" />
+
+                        <Link
+                          href={`/team-okr/${dept.id}`}
+                          className={`
+                            flex items-center gap-2 pl-9 pr-3 py-2 rounded-[var(--radius-md)]
+                            transition-all duration-[var(--duration-fast)] text-[var(--text-sm)]
+                            ${currentDept === dept.id
+                              ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/10'
+                              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'
+                            }
+                          `}
+                        >
+                          <span className={`w-2 h-2 rounded-full ${currentDept === dept.id ? 'bg-[var(--color-primary)]' : 'bg-[var(--color-border)]'}`} />
+                          <span>{dept.name}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </li>
+
+            {/* Create OKR */}
+            <li>
+              <Link
+                href="/create"
+                className={`
+                  flex items-center gap-3 px-4 py-3 rounded-[var(--radius-md)]
+                  transition-all duration-[var(--duration-fast)]
+                  ${pathname === '/create'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)]'
+                    : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
+                  }
+                `}
+              >
+                <Plus className="w-5 h-5" />
+                <span className="font-medium">{t('nav.createOkr')}</span>
+              </Link>
+            </li>
           </ul>
         </nav>
 
