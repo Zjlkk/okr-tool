@@ -1,14 +1,201 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma Schema for OKR Tool
+// Based on PRD v1.1 data model
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User roles
+enum UserRole {
+  LEADER
+  MEMBER
+}
+
+// OKR status
+enum OKRStatus {
+  DRAFT
+  SUBMITTED
+}
+
+// Reminder status
+enum ReminderStatus {
+  PENDING
+  DONE
+}
+
+// User model - integrated with NextAuth
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  role          UserRole?
+  departmentId  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  department        Department?     @relation("DepartmentMembers", fields: [departmentId], references: [id])
+  ledDepartment     Department?     @relation("DepartmentLeader")
+  personalOKRs      PersonalOKR[]
+  draft             Draft?
+  sentReminders     Reminder[]      @relation("ReminderFrom")
+  receivedReminders Reminder[]      @relation("ReminderTo")
+  comments          Comment[]
+  accounts          Account[]
+  sessions          Session[]
+
+  @@index([email])
+  @@index([departmentId])
+}
+
+// NextAuth Account model
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+// NextAuth Session model
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// NextAuth VerificationToken model
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Department model
+model Department {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  leaderId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  leader         User?           @relation("DepartmentLeader", fields: [leaderId], references: [id])
+  members        User[]          @relation("DepartmentMembers")
+  departmentOKRs DepartmentOKR[]
+  reminders      Reminder[]
+}
+
+// Department OKR (bi-monthly goals set by leader)
+model DepartmentOKR {
+  id           String   @id @default(cuid())
+  departmentId String
+  period       String   // e.g., "2026-01/02"
+  objectives   String   @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([departmentId, period])
+  @@index([departmentId])
+  @@index([period])
+}
+
+// Personal OKR
+model PersonalOKR {
+  id         String    @id @default(cuid())
+  userId     String
+  period     String
+  objective  String    @db.Text
+  keyResults Json      // Array of { id, content, progress? }
+  status     OKRStatus @default(DRAFT)
+  isArchived Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+
+  @@index([userId])
+  @@index([period])
+  @@index([status])
+}
+
+// Draft (auto-save during OKR creation)
+model Draft {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  period        String
+  currentStep   String   // JSON string of step info
+  answers       Json     // { questionKey: answer }
+  confirmedOKRs Json     // Array of confirmed OKRs
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Reminder (member reminding leader to set department goals)
+model Reminder {
+  id           String         @id @default(cuid())
+  fromUserId   String
+  toUserId     String
+  departmentId String
+  period       String
+  status       ReminderStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+
+  // Relations
+  fromUser   User       @relation("ReminderFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User       @relation("ReminderTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  department Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@index([toUserId])
+  @@index([departmentId])
+  @@index([period])
+}
+
+// Comment (P1 feature)
+model Comment {
+  id        String   @id @default(cuid())
+  okrId     String
+  userId    String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  // Relations
+  okr  PersonalOKR @relation(fields: [okrId], references: [id], onDelete: Cascade)
+  user User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([okrId])
+  @@index([userId])
 }
