@@ -107,6 +107,7 @@ const translations: Record<Language, Translations> = {
     'progress.trend': 'Progress Trend',
     'progress.departmentTrend': 'Department Progress Trend',
     'progress.currentWeek': 'Current Week',
+    'progress.average': 'avg',
   },
   zh: {
     // Navigation
@@ -202,6 +203,7 @@ const translations: Record<Language, Translations> = {
     'progress.trend': '进度趋势',
     'progress.departmentTrend': '部门进度趋势',
     'progress.currentWeek': '当前周',
+    'progress.average': '平均',
   },
 }
 

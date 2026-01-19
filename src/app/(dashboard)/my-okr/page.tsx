@@ -330,23 +330,21 @@ export default function MyOKRPage() {
                       </div>
                     </div>
 
-                    {/* Progress Overview */}
-                    <div className="mt-4 flex items-center gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[var(--text-xs)] text-[var(--color-text-secondary)]">
-                            {t('progress.overallProgress')}
-                          </span>
-                          <span className="text-[var(--text-sm)] font-semibold text-[var(--color-primary)]">
-                            {overallProgress}%
-                          </span>
-                        </div>
-                        <ProgressBar progress={overallProgress} size="md" showLabel={false} />
+                    {/* Progress Overview - compact inline display */}
+                    <div className="mt-3 flex items-center gap-4 text-[var(--text-xs)] text-[var(--color-text-disabled)]">
+                      <div className="flex items-center gap-2">
+                        <span>{t('progress.overallProgress')}</span>
+                        <span className="font-medium text-[var(--color-text-secondary)]">
+                          {overallProgress}%
+                        </span>
+                        <span className="text-[var(--color-text-disabled)]">
+                          ({okr.keyResults.length} KRs {t('progress.average')})
+                        </span>
                       </div>
                       {trendData.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <TrendingUp className="w-4 h-4 text-[var(--color-text-disabled)]" />
-                          <MiniTrendChart data={trendData} />
+                        <div className="flex items-center gap-1.5 ml-auto">
+                          <TrendingUp className="w-3.5 h-3.5" />
+                          <MiniTrendChart data={trendData} width={80} height={24} />
                         </div>
                       )}
                     </div>

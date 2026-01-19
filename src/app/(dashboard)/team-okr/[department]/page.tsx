@@ -233,8 +233,8 @@ function OKRTreeWithProgress({ name, isLeader, okr, okrIndex, showName = true }:
 
   return (
     <div>
-      {/* Header with Name and Progress */}
-      <div className="flex items-start justify-between mb-4">
+      {/* Header with Name */}
+      <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-3">
           {showName && (
             <>
@@ -258,23 +258,20 @@ function OKRTreeWithProgress({ name, isLeader, okr, okrIndex, showName = true }:
           </span>
           <ConfidenceIndicator confidence={latestConfidence} size="sm" />
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[var(--text-sm)] font-semibold text-[var(--color-primary)]">
-            {overallProgress}%
-          </span>
-        </div>
       </div>
 
       {/* Objective */}
-      <div className="mb-4">
+      <div className="mb-3">
         <p className="text-[var(--text-sm)] text-[var(--color-text-primary)] leading-relaxed">
           {okr.objective}
         </p>
       </div>
 
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <ProgressBar progress={overallProgress} size="md" showLabel={false} />
+      {/* Compact Progress Summary */}
+      <div className="mb-4 flex items-center gap-2 text-[var(--text-xs)] text-[var(--color-text-disabled)]">
+        <span>{t('progress.overallProgress')}</span>
+        <span className="font-medium text-[var(--color-text-secondary)]">{overallProgress}%</span>
+        <span>({okr.keyResults.length} KRs {t('progress.average')})</span>
       </div>
 
       {/* Key Results */}
