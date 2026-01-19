@@ -12,6 +12,7 @@ import { Button, Card, Textarea } from '@/components/ui'
 import { useOKRStore } from '@/stores/useOKRStore'
 import { useToastStore } from '@/stores/useToastStore'
 import { useLoadingStore } from '@/stores/useLoadingStore'
+import { useLanguageStore } from '@/stores/useLanguageStore'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
 import { mockDepartmentGoal, mockAIObjective, mockAIKeyResults } from '@/lib/mock-data'
 import {
@@ -25,37 +26,11 @@ import {
   Trash2,
 } from 'lucide-react'
 
-// Question definitions
-const objectiveQuestions = [
-  {
-    id: 'mostImportantThing',
-    question: 'What is the most important thing you want to achieve this bi-monthly period? What is your goal?',
-    placeholder: 'e.g., Launch the new user onboarding flow to improve activation rates...',
-  },
-  {
-    id: 'whyImportant',
-    question: 'Why is this important? How does it help the department goal?',
-    placeholder: 'e.g., This aligns with our department goal of improving user retention by 20%...',
-  },
-]
-
-const keyResultQuestions = [
-  {
-    id: 'keyActions',
-    question: 'What key actions do you need to take to achieve this objective?',
-    placeholder: 'e.g., Design and implement the onboarding flow, run A/B tests, analyze user feedback...',
-  },
-  {
-    id: 'successCriteria',
-    question: 'How will you know you have achieved it? What metrics define success?',
-    placeholder: 'e.g., Activation rate increases from 40% to 60%, user drop-off reduces by 30%...',
-  },
-]
-
 export default function CreateOKRPage() {
   const router = useRouter()
   const { success: showSuccess, error: showError } = useToastStore()
   const { setLoading } = useLoadingStore()
+  const { t } = useLanguageStore()
 
   const {
     phase,
@@ -89,6 +64,33 @@ export default function CreateOKRPage() {
   const [manualKeyResults, setManualKeyResults] = useState(['', '', ''])
 
   const currentPeriod = getCurrentPeriod()
+
+  // Question definitions with translation keys
+  const objectiveQuestions = [
+    {
+      id: 'mostImportantThing',
+      questionKey: 'question.mostImportant',
+      placeholder: 'e.g., Launch the new user onboarding flow to improve activation rates...',
+    },
+    {
+      id: 'whyImportant',
+      questionKey: 'question.whyImportant',
+      placeholder: 'e.g., This aligns with our department goal of improving user retention by 20%...',
+    },
+  ]
+
+  const keyResultQuestions = [
+    {
+      id: 'keyActions',
+      questionKey: 'question.keyActions',
+      placeholder: 'e.g., Design and implement the onboarding flow, run A/B tests, analyze user feedback...',
+    },
+    {
+      id: 'successCriteria',
+      questionKey: 'question.successCriteria',
+      placeholder: 'e.g., Activation rate increases from 40% to 60%, user drop-off reduces by 30%...',
+    },
+  ]
 
   // Use mock department goal
   useEffect(() => {
@@ -215,7 +217,7 @@ export default function CreateOKRPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-[var(--text-2xl)] font-bold text-[var(--color-text-primary)]">
-          Create OKR
+          {t('create.title')}
         </h1>
         <p className="mt-1 text-[var(--color-text-secondary)]">
           {formatPeriod(currentPeriod)}
@@ -226,7 +228,7 @@ export default function CreateOKRPage() {
       <div className="mb-6 flex items-center gap-4">
         <div className="flex items-center gap-2">
           <span className="text-[var(--text-sm)] font-medium text-[var(--color-text-primary)]">
-            Objectives: {confirmedOKRs.length}/3+
+            {t('create.objectives')}: {confirmedOKRs.length}/3+
           </span>
           <div className="flex gap-1">
             {[0, 1, 2].map((i) => (
@@ -235,6 +237,7 @@ export default function CreateOKRPage() {
                 className={`w-3 h-3 rounded-full ${
                   i < confirmedOKRs.length ? 'gradient-primary' : 'bg-[var(--color-border)]'
                 }`}
+                style={i < confirmedOKRs.length ? { boxShadow: 'var(--glow-primary-sm)' } : {}}
               />
             ))}
           </div>
@@ -246,7 +249,7 @@ export default function CreateOKRPage() {
           onClick={() => setManualMode(!isManualMode)}
           icon={isManualMode ? <Sparkles className="w-4 h-4" /> : <PenLine className="w-4 h-4" />}
         >
-          {isManualMode ? 'Use AI Mode' : 'Manual Mode'}
+          {isManualMode ? t('create.aiMode') : t('create.manualMode')}
         </Button>
       </div>
 
@@ -264,11 +267,11 @@ export default function CreateOKRPage() {
       {isManualMode ? (
         <Card className="mb-6">
           <h3 className="text-[var(--text-lg)] font-semibold text-[var(--color-text-primary)] mb-4">
-            Write Your OKR
+            {t('create.writeYourOkr')}
           </h3>
 
           <Textarea
-            label="Objective"
+            label={t('create.objective')}
             value={manualObjective}
             onChange={(e) => setManualObjective(e.target.value)}
             placeholder="Enter your objective..."
@@ -277,7 +280,7 @@ export default function CreateOKRPage() {
 
           <div className="mb-4">
             <label className="block mb-2 text-[var(--text-xs)] font-medium text-[var(--color-text-secondary)]">
-              Key Results
+              {t('create.keyResults')}
             </label>
             {manualKeyResults.map((kr, index) => (
               <div key={index} className="flex gap-2 mb-2">
@@ -302,12 +305,12 @@ export default function CreateOKRPage() {
               </div>
             ))}
             <Button variant="ghost" size="sm" onClick={handleAddManualKR} icon={<Plus className="w-4 h-4" />}>
-              Add Key Result
+              {t('create.addKeyResult')}
             </Button>
           </div>
 
           <Button onClick={handleSaveManualOKR} icon={<Check className="w-4 h-4" />}>
-            Save Objective
+            {t('create.saveObjective')}
           </Button>
         </Card>
       ) : (
@@ -321,8 +324,9 @@ export default function CreateOKRPage() {
                   ? 'gradient-primary text-white'
                   : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'
               }`}
+              style={phase === 'objective' ? { boxShadow: 'var(--glow-primary-sm)' } : {}}
             >
-              Phase A: Create Objective
+              {t('create.phaseA')}
             </span>
             <ArrowRight className="w-4 h-4 text-[var(--color-text-disabled)]" />
             <span
@@ -331,8 +335,9 @@ export default function CreateOKRPage() {
                   ? 'gradient-primary text-white'
                   : 'bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)]'
               }`}
+              style={phase === 'keyResults' ? { boxShadow: 'var(--glow-primary-sm)' } : {}}
             >
-              Phase B: Define Key Results
+              {t('create.phaseB')}
             </span>
           </div>
 
@@ -341,7 +346,7 @@ export default function CreateOKRPage() {
             <>
               <div className="mb-6">
                 <h3 className="text-[var(--text-lg)] font-semibold text-[var(--color-text-primary)] mb-4">
-                  {currentQuestion?.question}
+                  {t(currentQuestion?.questionKey || '')}
                 </h3>
                 <Textarea
                   value={currentAnswer}
@@ -365,7 +370,7 @@ export default function CreateOKRPage() {
                   disabled={currentQuestionIndex === 0}
                   icon={<ArrowLeft className="w-4 h-4" />}
                 >
-                  Previous
+                  {t('create.previous')}
                 </Button>
 
                 {currentQuestionIndex < questions.length - 1 ? (
@@ -374,7 +379,7 @@ export default function CreateOKRPage() {
                     disabled={!currentAnswer.trim()}
                     icon={<ArrowRight className="w-4 h-4" />}
                   >
-                    Next
+                    {t('create.next')}
                   </Button>
                 ) : (
                   <Button
@@ -383,7 +388,7 @@ export default function CreateOKRPage() {
                     disabled={!currentAnswer.trim()}
                     icon={<Sparkles className="w-4 h-4" />}
                   >
-                    Generate with AI
+                    {t('create.generateAi')}
                   </Button>
                 )}
               </div>
@@ -393,7 +398,7 @@ export default function CreateOKRPage() {
             <>
               <div className="mb-6">
                 <h3 className="text-[var(--text-sm)] font-medium text-[var(--color-text-secondary)] mb-2">
-                  {phase === 'objective' ? 'Generated Objective' : 'Generated Key Results'}
+                  {phase === 'objective' ? t('create.generatedObjective') : t('create.generatedKeyResults')}
                 </h3>
 
                 {phase === 'objective' ? (
@@ -434,10 +439,10 @@ export default function CreateOKRPage() {
                       disabled={!feedback.trim()}
                       icon={<RefreshCw className="w-4 h-4" />}
                     >
-                      Regenerate
+                      {t('create.regenerate')}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={() => setShowFeedbackInput(false)}>
-                      Cancel
+                      {t('create.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -451,14 +456,14 @@ export default function CreateOKRPage() {
                   disabled={showFeedbackInput}
                   icon={<RefreshCw className="w-4 h-4" />}
                 >
-                  Not satisfied? Improve
+                  {t('create.notSatisfied')}
                 </Button>
 
                 <Button
                   onClick={phase === 'objective' ? handleConfirmObjective : handleConfirmKeyResults}
                   icon={<Check className="w-4 h-4" />}
                 >
-                  {phase === 'objective' ? 'Confirm & Continue' : 'Confirm Key Results'}
+                  {phase === 'objective' ? t('create.confirmContinue') : t('create.confirmKeyResults')}
                 </Button>
               </div>
             </>
@@ -470,7 +475,7 @@ export default function CreateOKRPage() {
       {confirmedOKRs.length > 0 && (
         <div className="mb-6">
           <h3 className="text-[var(--text-lg)] font-semibold text-[var(--color-text-primary)] mb-4">
-            Confirmed Objectives ({confirmedOKRs.length})
+            {t('create.confirmedObjectives')} ({confirmedOKRs.length})
           </h3>
           <div className="space-y-3">
             {confirmedOKRs.map((okr, index) => (
@@ -510,15 +515,15 @@ export default function CreateOKRPage() {
       <div className="flex items-center justify-between">
         <p className="text-[var(--text-sm)] text-[var(--color-text-secondary)]">
           {confirmedOKRs.length < 3
-            ? `Need ${3 - confirmedOKRs.length} more objective(s) to submit`
-            : 'Ready to submit!'}
+            ? t('create.needMore').replace('{count}', String(3 - confirmedOKRs.length))
+            : t('create.readySubmit')}
         </p>
         <Button
           onClick={handleSubmitAll}
           disabled={confirmedOKRs.length < 3}
           size="lg"
         >
-          Submit All OKRs
+          {t('create.submitAll')}
         </Button>
       </div>
     </div>

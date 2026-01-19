@@ -9,6 +9,7 @@
 import { useState, useEffect } from 'react'
 import { Card, Tabs, Button } from '@/components/ui'
 import { useToastStore } from '@/stores/useToastStore'
+import { useLanguageStore } from '@/stores/useLanguageStore'
 import { formatPeriod, getCurrentPeriod } from '@/lib/utils'
 import { Bell, ChevronDown, ChevronUp, User } from 'lucide-react'
 import { mockDepartments, mockTeamOKRs, mockDepartmentGoal, mockUser } from '@/lib/mock-data'
@@ -37,7 +38,8 @@ interface Department {
 }
 
 export default function TeamOKRPage() {
-  const { success, error } = useToastStore()
+  const { success } = useToastStore()
+  const { t } = useLanguageStore()
 
   const [departments, setDepartments] = useState<Department[]>([])
   const [activeDepartment, setActiveDepartment] = useState<string>('')
@@ -78,12 +80,6 @@ export default function TeamOKRPage() {
   }, [activeDepartment])
 
   const handleRemindLeader = async () => {
-    const dept = departments.find((d) => d.id === activeDepartment)
-    if (!dept?.leaderId) {
-      success('Reminder sent to leader!')
-      return
-    }
-
     setIsReminding(true)
     // Simulate API call
     setTimeout(() => {
@@ -103,7 +99,7 @@ export default function TeamOKRPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-[var(--text-2xl)] font-bold text-[var(--color-text-primary)]">
-          Team OKR
+          {t('teamOkr.title')}
         </h1>
         <p className="mt-1 text-[var(--color-text-secondary)]">
           {formatPeriod(currentPeriod)}
@@ -122,12 +118,12 @@ export default function TeamOKRPage() {
       {departmentGoal ? (
         <Card className="mb-6 bg-[var(--color-primary)]/5 border-[var(--color-primary)]/20">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center flex-shrink-0">
+            <div className="w-8 h-8 rounded-full gradient-primary flex items-center justify-center flex-shrink-0" style={{ boxShadow: 'var(--glow-primary-sm)' }}>
               <span className="text-white text-[var(--text-xs)] font-bold">G</span>
             </div>
             <div>
               <h3 className="text-[var(--text-sm)] font-semibold text-[var(--color-text-primary)] mb-1">
-                Department Goal
+                {t('teamOkr.departmentGoal')}
               </h3>
               <p className="text-[var(--color-text-secondary)]">{departmentGoal}</p>
             </div>
@@ -138,10 +134,10 @@ export default function TeamOKRPage() {
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-[var(--text-sm)] font-semibold text-[var(--color-warning)] mb-1">
-                Department Goal Not Set
+                {t('teamOkr.goalNotSet')}
               </h3>
               <p className="text-[var(--text-xs)] text-[var(--color-text-secondary)]">
-                Leader needs to set the department goal for this period.
+                {t('teamOkr.goalNotSetDesc')}
               </p>
             </div>
             {user.role === 'MEMBER' && (
@@ -152,7 +148,7 @@ export default function TeamOKRPage() {
                 loading={isReminding}
                 icon={<Bell className="w-4 h-4" />}
               >
-                Remind Leader
+                {t('teamOkr.remindLeader')}
               </Button>
             )}
           </div>
@@ -168,10 +164,10 @@ export default function TeamOKRPage() {
         <Card className="text-center py-12">
           <User className="w-12 h-12 mx-auto mb-4 text-[var(--color-text-disabled)]" />
           <h3 className="text-[var(--text-lg)] font-semibold text-[var(--color-text-primary)] mb-2">
-            No OKRs yet
+            {t('teamOkr.noOkrs')}
           </h3>
           <p className="text-[var(--color-text-secondary)]">
-            Team members haven&apos;t created OKRs for this period yet.
+            {t('teamOkr.noOkrsDesc')}
           </p>
         </Card>
       ) : (
@@ -209,7 +205,7 @@ export default function TeamOKRPage() {
                             : 'text-[var(--color-warning)] bg-[var(--color-warning-light)]'
                         }`}
                       >
-                        {okr.status === 'SUBMITTED' ? 'Submitted' : 'Draft'}
+                        {okr.status === 'SUBMITTED' ? t('status.submitted') : t('status.draft')}
                       </span>
                     </div>
                     <h3 className="text-[var(--color-text-primary)]">{okr.objective}</h3>
