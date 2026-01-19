@@ -26,18 +26,18 @@ export function ProgressBar({
     lg: 'h-2',
   }
 
-  // Soft, muted colors with transparency for refined look
+  // Bright colors with high transparency for refined look
   const getProgressStyle = (): { background: string } => {
     if (clampedProgress >= 70) {
-      // Soft green - success
-      return { background: 'rgba(74, 222, 128, 0.6)' }
+      // Bright green - success
+      return { background: 'rgba(34, 197, 94, 0.35)' }
     }
     if (clampedProgress >= 40) {
-      // Soft blue/primary
-      return { background: 'rgba(96, 165, 250, 0.6)' }
+      // Bright blue/primary
+      return { background: 'rgba(59, 130, 246, 0.35)' }
     }
-    // Soft amber - warning
-    return { background: 'rgba(251, 191, 36, 0.5)' }
+    // Bright amber - warning
+    return { background: 'rgba(245, 158, 11, 0.35)' }
   }
 
   return (

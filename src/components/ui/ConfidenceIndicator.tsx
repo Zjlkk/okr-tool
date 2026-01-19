@@ -15,25 +15,25 @@ interface ConfidenceIndicatorProps {
   className?: string
 }
 
-// Soft, muted color palette
+// Bright colors with high transparency
 const colorPalette = {
   on_track: {
-    dot: 'rgba(74, 222, 128, 0.8)',
-    glow: 'rgba(74, 222, 128, 0.3)',
-    bg: 'rgba(74, 222, 128, 0.15)',
-    text: 'rgba(74, 222, 128, 0.9)',
+    dot: 'rgba(34, 197, 94, 0.7)',
+    glow: 'rgba(34, 197, 94, 0.2)',
+    bg: 'rgba(34, 197, 94, 0.1)',
+    text: 'rgba(34, 197, 94, 0.8)',
   },
   at_risk: {
-    dot: 'rgba(251, 191, 36, 0.8)',
-    glow: 'rgba(251, 191, 36, 0.3)',
-    bg: 'rgba(251, 191, 36, 0.15)',
-    text: 'rgba(251, 191, 36, 0.9)',
+    dot: 'rgba(245, 158, 11, 0.7)',
+    glow: 'rgba(245, 158, 11, 0.2)',
+    bg: 'rgba(245, 158, 11, 0.1)',
+    text: 'rgba(245, 158, 11, 0.8)',
   },
   off_track: {
-    dot: 'rgba(248, 113, 113, 0.8)',
-    glow: 'rgba(248, 113, 113, 0.3)',
-    bg: 'rgba(248, 113, 113, 0.15)',
-    text: 'rgba(248, 113, 113, 0.9)',
+    dot: 'rgba(239, 68, 68, 0.7)',
+    glow: 'rgba(239, 68, 68, 0.2)',
+    bg: 'rgba(239, 68, 68, 0.1)',
+    text: 'rgba(239, 68, 68, 0.8)',
   },
 }
 

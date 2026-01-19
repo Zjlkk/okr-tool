@@ -78,8 +78,8 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
         <defs>
           {/* Gradient for area fill */}
           <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="rgba(96, 165, 250, 0.2)" />
-            <stop offset="100%" stopColor="rgba(96, 165, 250, 0)" />
+            <stop offset="0%" stopColor="rgba(59, 130, 246, 0.12)" />
+            <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
           </linearGradient>
         </defs>
 
@@ -128,7 +128,7 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
           y1={padding.top}
           x2={xScale(mockCurrentWeek)}
           y2={padding.top + chartHeight}
-          stroke="rgba(96, 165, 250, 0.3)"
+          stroke="rgba(59, 130, 246, 0.2)"
           strokeWidth="1"
           strokeDasharray="3,3"
         />
@@ -146,7 +146,7 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
             <path
               d={generatePath(line.data)}
               fill="none"
-              stroke="rgba(96, 165, 250, 0.6)"
+              stroke="rgba(59, 130, 246, 0.4)"
               strokeWidth="1.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -159,7 +159,7 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
                 cx={xScale(point.weekNumber)}
                 cy={yScale(point.progress)}
                 r="3"
-                fill="rgba(96, 165, 250, 0.8)"
+                fill="rgba(59, 130, 246, 0.5)"
                 stroke="var(--color-bg-card)"
                 strokeWidth="1.5"
               />
@@ -175,7 +175,7 @@ export function TrendChart({ lines, height = 200, className = '' }: TrendChartPr
             <div key={line.id} className="flex items-center gap-2">
               <span
                 className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: 'rgba(96, 165, 250, 0.6)' }}
+                style={{ backgroundColor: 'rgba(59, 130, 246, 0.5)' }}
               />
               <span className="text-[var(--text-xs)] text-[var(--color-text-disabled)]">
                 {line.name}
@@ -227,8 +227,8 @@ export function MiniTrendChart({ data, width = 100, height = 32, className = '' 
     >
       <defs>
         <linearGradient id="miniAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="rgba(96, 165, 250, 0.15)" />
-          <stop offset="100%" stopColor="rgba(96, 165, 250, 0)" />
+          <stop offset="0%" stopColor="rgba(59, 130, 246, 0.1)" />
+          <stop offset="100%" stopColor="rgba(59, 130, 246, 0)" />
         </linearGradient>
       </defs>
 
@@ -242,7 +242,7 @@ export function MiniTrendChart({ data, width = 100, height = 32, className = '' 
       <path
         d={path}
         fill="none"
-        stroke="rgba(96, 165, 250, 0.5)"
+        stroke="rgba(59, 130, 246, 0.35)"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -254,7 +254,7 @@ export function MiniTrendChart({ data, width = 100, height = 32, className = '' 
           cx={xScale(sortedData[sortedData.length - 1].weekNumber)}
           cy={yScale(sortedData[sortedData.length - 1].progress)}
           r="2.5"
-          fill="rgba(96, 165, 250, 0.7)"
+          fill="rgba(59, 130, 246, 0.5)"
         />
       )}
     </svg>
